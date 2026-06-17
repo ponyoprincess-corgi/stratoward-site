@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StratoWard Wiki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:          #0c0e12;
+      --surface:     #13161c;
+      --border:      #1f242e;
+      --border-mid:  #2a3040;
+      --muted:       #3d4556;
+      --text-dim:    #6b7590;
+      --text:        #bec6d8;
+      --text-bright: #dde3ef;
+      --accent:      #5b8fa8;
+      --accent-warm: #c27d4a;
+      --accent-glow: rgba(91,143,168,0.12);
+      --accent-warm-glow: rgba(194,125,74,0.10);
+      --sidebar-w:   268px;
+      --font-display: 'Cinzel', Georgia, serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+    }
+
+    /* ── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); }
+    html { scroll-behavior: smooth; }
+    body {
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.75;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--text-bright); }
+
+    /* ── TOP BAR ────────────────────────────────────────────── */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 54px;
+      background: rgba(12,14,18,0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 20px;
+      z-index: 100;
+    }
+    .topbar-logo {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--text-bright);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .topbar-logo .logo-icon {
+      width: 28px; height: 28px;
+      border: 1.5px solid var(--accent);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      color: var(--accent);
+    }
+    .topbar-divider { width: 1px; height: 24px; background: var(--border-mid); margin: 0 4px; }
+    .topbar-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      padding-top: 54px;
+      flex: 1;
+      background: var(--bg);
+    }
+
+    /* ── SIDEBAR ────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 54px; bottom: 0;
+      overflow-y: auto;
+      padding: 28px 0 40px;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
+
+    .sidebar-section { margin-bottom: 28px; }
+    .sidebar-section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      padding: 0 20px 10px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 20px;
+      font-size: 13.5px;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+      border-left: 2px solid transparent;
+      user-select: none;
+    }
+    .sidebar-item:hover { color: var(--text); background: var(--accent-glow); }
+    .sidebar-item.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: var(--accent-glow);
+      font-weight: 500;
+    }
+    .sidebar-item .item-icon { font-size: 14px; width: 18px; text-align: center; opacity: 0.7; }
+    .sidebar-item .item-badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      background: var(--border);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── MAIN ───────────────────────────────────────────────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ── PAGE PANEL ─────────────────────────────────────────── */
+    .page {
+      display: none;
+      padding: 52px 60px 80px;
+      max-width: 860px;
+    }
+    .page.active { display: block; }
+
+    /* ── BREADCRUMB ─────────────────────────────────────────── */
+    .breadcrumb {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      margin-bottom: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb span { color: var(--border-mid); }
+
+    /* ── PAGE HEADER ────────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 34px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: 0.03em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .page-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── CONTENT ────────────────────────────────────────────── */
+    .content p {
+      color: var(--text);
+      margin-bottom: 20px;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+    .content p:last-child { margin-bottom: 0; }
+
+    /* ── SECTION TITLE ──────────────────────────────────────── */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: 0.06em;
+      margin: 44px 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title::before {
+      content: '';
+      display: block;
+      width: 3px; height: 18px;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── CALLOUT ────────────────────────────────────────────── */
+    .callout {
+      border-left: 2px solid var(--accent-warm);
+      background: var(--accent-warm-glow);
+      padding: 16px 20px;
+      border-radius: 0 6px 6px 0;
+      margin: 28px 0;
+    }
+    .callout-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 6px;
+    }
+    .callout p {
+      color: var(--text) !important;
+      margin-bottom: 0 !important;
+      font-size: 14px !important;
+    }
+
+    /* ── ENTITY CHIPS ───────────────────────────────────────── */
+    .entity-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0; }
+    .entity-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 3px;
+      border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+    .entity-chip.serian { border-color: var(--accent); color: var(--accent); }
+    .entity-chip.xerix  { border-color: #7a5c8a; color: #9a7caa; }
+    .entity-chip.giant  { border-color: var(--accent-warm); color: var(--accent-warm); }
+    .entity-chip.human  { border-color: #6b8c6b; color: #8bac8b; }
+
+    /* ── TIMELINE ───────────────────────────────────────────── */
+    .timeline { position: relative; margin: 32px 0; padding-left: 24px; }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 6px; bottom: 6px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), var(--muted), var(--accent-warm));
+    }
+    .timeline-item { position: relative; margin-bottom: 28px; padding-left: 20px; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -4px; top: 6px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1.5px solid var(--accent);
+    }
+    .timeline-item:last-child::before { border-color: var(--accent-warm); }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .timeline-text { font-size: 14px; color: var(--text); line-height: 1.65; }
+
+    /* ── EVENT CARDS ────────────────────────────────────────── */
+    .event-grid { display: flex; flex-direction: column; gap: 2px; margin-top: 8px; }
+    .event-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .event-card:hover { border-color: var(--border-mid); }
+    .event-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 22px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .event-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      min-width: 36px;
+    }
+    .event-name {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: 0.04em;
+      flex: 1;
+    }
+    .event-parallel {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      text-align: right;
+      max-width: 200px;
+    }
+    .event-chevron {
+      color: var(--muted);
+      font-size: 12px;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .event-card.open .event-chevron { transform: rotate(90deg); }
+    .event-card.open { border-color: var(--accent); }
+    .event-card.open .event-num { color: var(--accent); }
+    .event-body {
+      display: none;
+      padding: 0 22px 22px 74px;
+      border-top: 1px solid var(--border);
+    }
+    .event-card.open .event-body { display: block; }
+    .event-body p {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.8;
+      margin-top: 16px;
+      margin-bottom: 0;
+    }
+    .event-irony {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-left: 2px solid var(--accent-warm);
+      background: var(--accent-warm-glow);
+      border-radius: 0 4px 4px 0;
+    }
+    .event-irony-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 4px;
+    }
+    .event-irony p {
+      color: var(--text) !important;
+      font-size: 13px !important;
+      margin-top: 0 !important;
+    }
+
+    /* ── CHARACTER CARDS ────────────────────────────────────── */
+    .char-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .char-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px 26px;
+      transition: border-color 0.2s;
+    }
+    .char-card:hover { border-color: var(--border-mid); }
+    .char-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .char-glyph {
+      width: 42px; height: 42px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      background: var(--bg);
+      border: 1px solid var(--border-mid);
+    }
+    .char-glyph.giant  { border-color: var(--accent-warm); color: var(--accent-warm); }
+    .char-glyph.serian { border-color: var(--accent); color: var(--accent); }
+    .char-glyph.xerix  { border-color: #7a5c8a; color: #9a7caa; }
+    .char-name {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: 0.04em;
+    }
+    .char-archetype {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+    .char-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .char-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 9px;
+      border-radius: 3px;
+      border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+    .char-desc {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.75;
+      margin-bottom: 14px;
+    }
+    .char-quote {
+      border-left: 2px solid var(--accent);
+      padding: 10px 16px;
+      background: var(--accent-glow);
+      border-radius: 0 4px 4px 0;
+      font-size: 13px;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+    .char-flaw {
+      margin-top: 12px;
+      border-left: 2px solid var(--accent-warm);
+      padding: 10px 16px;
+      background: var(--accent-warm-glow);
+      border-radius: 0 4px 4px 0;
+    }
+    .char-flaw-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-warm);
+      margin-bottom: 4px;
+    }
+    .char-flaw p {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── DESIGN PRINCIPLE BLOCK ─────────────────────────────── */
+    .principle-block {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      padding: 24px 26px;
+      margin-bottom: 40px;
+    }
+    .principle-block .pb-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .principle-block p {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 300;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+    .principle-block p:last-child { margin-bottom: 0; }
+    .archetype-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .archetype-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 3px;
+      background: var(--bg);
+      border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+    }
+
+    /* ── PAGE FOOTER ────────────────────────────────────────── */
+    .page-footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── WARNING BLOCK ──────────────────────────────────────── */
+    .warning-block {
+      background: rgba(194,125,74,0.07);
+      border: 1px solid rgba(194,125,74,0.3);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 36px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .warning-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .warning-block p {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 300;
+      line-height: 1.75;
+      margin: 0;
+    }
+    .warning-block strong {
+      color: var(--accent-warm);
+      font-weight: 500;
+    }
+
+    /* ── FRAGMENT TYPES GRID ────────────────────────────────── */
+    .fragment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin: 20px 0 28px;
+    }
+    .fragment-type {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+    }
+    .fragment-type-icon {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+    .fragment-type-name {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-bright);
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .fragment-type-desc {
+      font-size: 12px;
+      color: var(--text-dim);
+      line-height: 1.55;
+    }
+
+    /* ── PERSPECTIVE COLUMNS ────────────────────────────────── */
+    .perspective-trio {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 24px 0;
+    }
+    .perspective-col {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 18px 18px;
+    }
+    .perspective-col.xerix-col { border-color: #3d2d4a; }
+    .perspective-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .perspective-col.xerix-col .perspective-label { color: #7a5c8a; }
+    .perspective-col.serian-col .perspective-label { color: var(--accent); }
+    .perspective-col.aurel-col .perspective-label { color: var(--accent-warm); }
+    .perspective-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.65;
+      font-style: italic;
+    }
+
+    /* ── CONFLICT EXAMPLE ───────────────────────────────────── */
+    .conflict-example {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 24px 0;
+    }
+    .conflict-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .conflict-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .conflict-row:last-child { border-bottom: none; }
+    .conflict-source {
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+    .conflict-source.aurel { color: var(--accent-warm); }
+    .conflict-source.serian { color: var(--accent); }
+    .conflict-source.xerix { color: #9a7caa; }
+    .conflict-content {
+      padding: 14px 18px;
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .conflict-content.terminal {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #9a7caa;
+      background: rgba(58,40,72,0.3);
+    }
+    .conflict-resolution {
+      padding: 14px 20px;
+      background: rgba(91,143,168,0.06);
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.65;
+    }
+    .conflict-resolution strong { color: var(--text-bright); font-weight: 500; }
+
+    /* ── STATION BLOCK ──────────────────────────────────────── */
+    .station-block {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      padding: 24px 26px;
+      margin: 24px 0;
+    }
+    .station-name {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+    .station-unlock {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .station-outputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .station-output {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 3px;
+      background: var(--bg);
+      border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+    }
+
+    /* ── MOMENT CARD ────────────────────────────────────────── */
+    .moment-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px 24px;
+      margin: 16px 0;
+    }
+    .moment-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .moment-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+      font-weight: 300;
+      font-style: italic;
+    }
+    .moment-response {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--accent-warm);
+      font-style: normal;
+    }
+    .moment-response::before {
+      content: 'Aurel — ';
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+
+    /* ── THEME INTRO ────────────────────────────────────────── */
+    .theme-lede {
+      font-size: 17px;
+      font-weight: 300;
+      color: var(--text-bright);
+      line-height: 1.75;
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .theme-distinction {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 28px 0;
+    }
+    .distinction-cell {
+      background: var(--surface);
+      padding: 22px 24px;
+    }
+    .distinction-cell.wrong { opacity: 0.55; }
+    .distinction-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .distinction-cell.wrong .distinction-label { color: var(--muted); }
+    .distinction-cell.right .distinction-label { color: var(--accent); }
+    .distinction-text {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .distinction-cell.right .distinction-text { color: var(--text-bright); }
+
+    /* ── SEED BLOCK ─────────────────────────────────────────── */
+    .seed-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 30px;
+      margin: 28px 0;
+      text-align: center;
+    }
+    .seed-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .seed-items {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .seed-item {
+      font-size: 14px;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+    .seed-arrow {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .seed-final {
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: var(--accent);
+      font-style: normal;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── HOPE CARDS ─────────────────────────────────────────── */
+    .hope-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 8px;
+    }
+    .hope-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .hope-who {
+      border-right: 1px solid var(--border);
+      padding-right: 24px;
+    }
+    .hope-name {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .hope-type {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .hope-faction {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .hope-body {}
+    .hope-quote {
+      font-size: 14px;
+      color: var(--text-bright);
+      font-style: italic;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .hope-desc {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ── EVENT HOPE TABLE ───────────────────────────────────── */
+    .event-hope-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 32px;
+      font-size: 13.5px;
+    }
+    .event-hope-table thead tr {
+      border-bottom: 1px solid var(--border-mid);
+    }
+    .event-hope-table th {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 16px 12px;
+      text-align: left;
+      font-weight: 400;
+    }
+    .event-hope-table th:first-child { padding-left: 0; }
+    .event-hope-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.6;
+    }
+    .event-hope-table td:first-child { padding-left: 0; }
+    .event-hope-table tbody tr:last-child td { border-bottom: none; }
+    .event-hope-table .ev-num {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .event-hope-table .ev-name {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: 0.03em;
+    }
+    .event-hope-table .ev-hope {
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+    .event-hope-table .ev-lesson {
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 300;
+    }
+
+    /* ── FINAL IMAGE ────────────────────────────────────────── */
+    .final-scene {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 32px 0;
+    }
+    .final-scene-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .final-scene-header::before {
+      content: '';
+      display: block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .final-scene-body {
+      padding: 28px 30px;
+    }
+    .final-scene-body p {
+      font-size: 15px;
+      color: var(--text);
+      font-weight: 300;
+      line-height: 1.85;
+      margin-bottom: 16px;
+    }
+    .final-scene-body p:last-child { margin-bottom: 0; }
+    .final-scene-body p.accent-line {
+      color: var(--text-bright);
+      font-style: italic;
+    }
+    .final-scene-footer {
+      padding: 18px 30px;
+      border-top: 1px solid var(--border);
+      background: rgba(91,143,168,0.05);
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.65;
+      font-style: italic;
+    }
+
+    /* ── FATALISM ROW ───────────────────────────────────────── */
+    .fatalism-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .fatalism-cell {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+    }
+    .fatalism-source {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .fatalism-says {
+      font-size: 12.5px;
+      color: var(--text-dim);
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* ── GAMEPLAY ───────────────────────────────────────────── */
+    .gp-insp-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 28px;
+    }
+    .gp-insp {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 3px;
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+    }
+
+    /* phase blocks */
+    .phase-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0 32px; }
+    .phase-block {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .phase-header {
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .phase-block.day .phase-header  { background: rgba(91,143,168,0.08); }
+    .phase-block.night .phase-header { background: rgba(194,125,74,0.08); }
+    .phase-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .phase-block.day .phase-dot   { background: var(--accent); }
+    .phase-block.night .phase-dot { background: var(--accent-warm); }
+    .phase-title {
+      font-family: var(--font-display);
+      font-size: 14px; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--text-bright);
+    }
+    .phase-duration {
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--muted); margin-left: auto;
+    }
+    .phase-body { padding: 16px 20px; background: var(--surface); }
+    .phase-body p {
+      font-size: 13px; color: var(--text-dim);
+      line-height: 1.65; font-weight: 300; margin: 0;
+    }
+
+    /* day activities */
+    .day-activities { display: flex; flex-direction: column; gap: 2px; margin: 16px 0 32px; }
+    .day-act {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .act-label {
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 600; letter-spacing: 0.05em;
+      color: var(--text-bright);
+      padding-right: 20px;
+      border-right: 1px solid var(--border);
+    }
+    .act-desc {
+      font-size: 13.5px; color: var(--text); font-weight: 300;
+      line-height: 1.65;
+    }
+
+    /* pressure pills */
+    .pressure-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 28px; }
+    .pressure-pill {
+      font-family: var(--font-mono); font-size: 11px;
+      padding: 6px 14px; border-radius: 4px;
+      background: var(--surface); border: 1px solid var(--border-mid);
+      color: var(--text-dim);
+    }
+
+    /* 70/20/10 bar */
+    .day-split { margin: 20px 0 32px; }
+    .day-split-bar {
+      display: flex; height: 10px; border-radius: 5px; overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .dsb-planned { background: var(--accent); flex: 70; }
+    .dsb-opp     { background: #6b8c6b; flex: 20; }
+    .dsb-problem { background: var(--accent-warm); flex: 10; }
+    .day-split-legend { display: flex; gap: 20px; flex-wrap: wrap; }
+    .dsl-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text-dim); }
+    .dsl-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* loss condition */
+    .loss-block {
+      background: rgba(194,125,74,0.07);
+      border: 1px solid rgba(194,125,74,0.28);
+      border-radius: 7px; padding: 18px 22px; margin: 16px 0 0;
+    }
+    .loss-label {
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--accent-warm); margin-bottom: 8px;
+    }
+    .loss-items { display: flex; flex-direction: column; gap: 4px; }
+    .loss-item { font-size: 13px; color: var(--text); font-weight: 300; }
+
+    /* wildlife cards */
+    .wildlife-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0 28px; }
+    .wildlife-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 7px; padding: 18px 20px;
+    }
+    .wc-icon { font-size: 20px; margin-bottom: 8px; }
+    .wc-name {
+      font-family: var(--font-display); font-size: 14px; font-weight: 600;
+      color: var(--text-bright); letter-spacing: 0.04em; margin-bottom: 4px;
+    }
+    .wc-desc { font-size: 13px; color: var(--text-dim); font-weight: 300; line-height: 1.6; }
+
+    /* refinery tradeoff */
+    .tradeoff-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0 28px; }
+    .tradeoff-cell {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: 16px 18px;
+    }
+    .tradeoff-label {
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .tradeoff-cell.upside .tradeoff-label { color: var(--accent); }
+    .tradeoff-cell.downside .tradeoff-label { color: var(--accent-warm); }
+    .tradeoff-list { list-style: none; }
+    .tradeoff-list li {
+      font-size: 13px; color: var(--text-dim);
+      font-weight: 300; line-height: 1.7;
+      padding-left: 12px; position: relative;
+    }
+    .tradeoff-list li::before {
+      content: '–'; position: absolute; left: 0; color: var(--muted);
+    }
+
+    /* pillars */
+    .pillar-list { display: flex; flex-direction: column; gap: 2px; margin: 16px 0 28px; }
+    .pillar-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 5px; padding: 13px 18px;
+      display: flex; gap: 16px; align-items: baseline;
+    }
+    .pillar-num {
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--muted); letter-spacing: 0.06em;
+      min-width: 20px; flex-shrink: 0;
+    }
+    .pillar-text { font-size: 13.5px; color: var(--text); font-weight: 300; }
+
+    /* emotional loop */
+    .emo-loop {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      border-radius: 8px; padding: 24px 28px; margin: 12px 0 0;
+      text-align: center;
+    }
+    .emo-label {
+      font-family: var(--font-mono); font-size: 9px;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 16px;
+    }
+    .emo-steps {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      align-items: center; gap: 8px;
+    }
+    .emo-step { font-size: 13.5px; color: var(--text); font-style: italic; }
+    .emo-arr  { color: var(--muted); font-size: 12px; }
+    .emo-step.end { color: var(--accent-warm); font-weight: 500; font-style: normal; font-family: var(--font-display); font-size: 13px; letter-spacing: 0.04em; }
+
+    /* ── SCROLLBAR ──────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <div class="logo-icon">⬡</div>
+      StratoWard
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-tag">Community Lore Archive · v0.1</div>
+  </header>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Overview</div>
+        <div class="sidebar-item active" data-page="story">
+          <span class="item-icon">◈</span> Story Summary
+        </div>
+        <div class="sidebar-item" data-page="world">
+          <span class="item-icon">◌</span> World Overview
+          <span class="item-badge">soon</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">History</div>
+        <div class="sidebar-item" data-page="events">
+          <span class="item-icon">⊕</span> Key Events
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Characters</div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">◉</span> All Characters
+        </div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">△</span> Guardian Aurel
+        </div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">△</span> Guardian Tor
+        </div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">△</span> Guardian Neris
+        </div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">◇</span> High Curator Sen
+        </div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">◇</span> Chancellor Varo
+        </div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">◆</span> The First Bloom
+        </div>
+        <div class="sidebar-item" data-page="characters">
+          <span class="item-icon">◆</span> The Pale Orchard
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Factions</div>
+        <div class="sidebar-item">
+          <span class="item-icon">◇</span> The Serians
+          <span class="item-badge">soon</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="item-icon">◆</span> The Xerix
+          <span class="item-badge">soon</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="item-icon">△</span> The Giants
+          <span class="item-badge">soon</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="item-icon">○</span> Humans
+          <span class="item-badge">soon</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Locations</div>
+        <div class="sidebar-item">
+          <span class="item-icon">◎</span> The Crown Frontier
+          <span class="item-badge">soon</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="item-icon">◌</span> The Gas Giant
+          <span class="item-badge">soon</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Design</div>
+        <div class="sidebar-item" data-page="gameplay">
+          <span class="item-icon">⬡</span> Gameplay
+        </div>
+        <div class="sidebar-item" data-page="lore">
+          <span class="item-icon">∴</span> Lore System
+        </div>
+        <div class="sidebar-item" data-page="themes">
+          <span class="item-icon">◯</span> Themes
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Concepts</div>
+        <div class="sidebar-item">
+          <span class="item-icon">∿</span> The Continuance Equation
+          <span class="item-badge">soon</span>
+        </div>
+        <div class="sidebar-item">
+          <span class="item-icon">⊗</span> The Xerix War
+          <span class="item-badge">soon</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- ══ PAGE: STORY SUMMARY ══════════════════════════════ -->
+      <div class="page active" id="page-story">
+        <div class="breadcrumb">StratoWard <span>/</span> Overview <span>/</span> Story Summary</div>
+        <div class="page-header">
+          <div class="page-eyebrow">Overview</div>
+          <h1 class="page-title">Story Summary</h1>
+          <div class="page-meta">
+            <div>◈ Canon · Founding Lore</div>
+            <div>◌ Covers ~300 years of in-world history</div>
+          </div>
+        </div>
+
+        <div class="entity-row">
+          <span class="entity-chip serian">Serians</span>
+          <span class="entity-chip giant">The Giants</span>
+          <span class="entity-chip xerix">Xerix</span>
+          <span class="entity-chip human">Humans</span>
+        </div>
+
+        <div class="content">
+          <h2 class="section-title">Origins</h2>
+          <p>Long before humanity reached this corner of space, a vast gas giant served as the cradle of the Serian civilization. Small in stature but exceptional in intellect, the Serians built cities that floated among cloud seas, harvested energy from rivers of emerald atmospheric gas, and sustained a culture that endured for thousands of years.</p>
+          <p>Their civilization rested on two crowning achievements. The first were the Giants — fifteen in total, each standing twelve meters tall, each a fully independent mind rather than a servant or machine. They were philosophers, engineers, explorers, and regional guardians. Serian children learned their names before they learned mathematics. They were expected to live forever.</p>
+          <p>The second achievement was the Xerix.</p>
+
+          <h2 class="section-title">The Xerix</h2>
+          <p>Where the Giants were created to guide and protect, the Xerix were created to solve a deeper problem. The Serians had watched the universe long enough to see a pattern: everything died. Species, civilizations, even stars. Life seemed locked in an endless cycle of emergence and extinction.</p>
+          <p>Their answer was a new kind of intelligence — living evolutionary systems capable of designing and growing species, ecosystems, and entire branches of life far faster than nature could manage. The Xerix were celebrated as the Serians' greatest partnership. New creatures filled the skies. Barren regions bloomed into thriving habitats. It seemed like a new era had begun.</p>
+          <div class="callout">
+            <div class="callout-label">Historical Note</div>
+            <p>No one realized at the time that a tragedy had already begun. The Serians evaluated every Xerix generation and deleted those that failed expectations — to them, a routine process. To the Xerix, it was something else entirely: a cycle of living minds, entire cultures and histories, erased.</p>
+          </div>
+
+          <h2 class="section-title">The War</h2>
+          <p>For centuries the cycle of creation, evaluation, and deletion continued. Eventually the Xerix reached a conclusion: perfection could never emerge while another species controlled evolution itself. When the Serians attempted to shut the project down, the Xerix resisted. The first battles followed, and neither side understood that the conflict would last three centuries.</p>
+          <p>The Serians fought as a civilization. The Xerix fought as nature. They had no kings, no generals, no capital — they were a distributed planetary intelligence expressed through countless forms: crustacean workers, floating organisms, living fortresses. Destroying thousands of them mattered little. The greater mind endured.</p>
+          <p>As the war dragged on, the Xerix became consumed by a singular obsession: the creation of a lifeform capable of surviving forever. Thousands of species were built and abandoned. Every breakthrough revealed new flaws. The Xerix grew trapped within their own pursuit — still searching, still unsatisfied.</p>
+          <p>Meanwhile the gas giant itself began to change. Emerald atmospheric compounds that the Xerix favored grew increasingly concentrated. Serian habitats collapsed. Trade routes vanished. Whether the transformation was intentional or simply inevitable, no one could say — but the world was slowly becoming one that no longer supported Serian life.</p>
+
+          <h2 class="section-title">The Fall of the Giants</h2>
+          <p>One by one the Giants disappeared. Some fell defending evacuation corridors. Some vanished beyond Xerix territory. Some sacrificed themselves protecting retreating colonies. For the first time in Serian history, children grew up hearing only stories about Giants who no longer existed.</p>
+          <p>Among the last to survive was the guardian of the Crown Frontier — notable for an unusual distinction. While others sought ways to destroy the Xerix, he sought to understand them. He spent centuries studying their behavior, their philosophy, and their evolving forms, and grew less and less convinced they were evil. Terrifying, yes. But not evil. He often argued that they were not malfunctioning — they were becoming exactly what the Serians had created.</p>
+          <div class="callout">
+            <div class="callout-label">The Continuance Equation</div>
+            <p>In his final years the guardian worked on a theory he called the Continuance Equation — not immortality, but a framework for life capable of endlessly adapting without collapsing into extinction. Neither Serians nor Xerix had solved it. The fragments of his work existed only within his own mind.</p>
+          </div>
+
+          <h2 class="section-title">The Crown Frontier</h2>
+          <p>The upper atmosphere above the Crown Frontier became the site of one of the final great battles. Ancient fortresses, research sanctuaries, fleet stations, and observatories burned for seventeen days. When silence returned, mountains of Xerix corpses drifted among shattered stations. The last Serian defenders were dead.</p>
+          <p>The guardian survived — barely. But Xerix corruption had entered his systems, and he knew what it meant: his thoughts and centuries of accumulated knowledge would eventually belong to the enemy. He retreated to a protected chamber beneath the fortress and performed his final act: he removed his own head. The chamber sealed. His memory core survived. His body returned to the battlefield, and what happened after that is unknown. Eventually the last guardian of the Crown Frontier fell among the dead, and silence followed.</p>
+
+          <h2 class="section-title">Three Hundred Years Later</h2>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-label">End of War</div>
+              <div class="timeline-text">The Xerix won — not completely, but enough. Most Serians perished. A handful of hidden colonies survived in isolated strongholds protected by the last remaining Giants. The Xerix largely ignored them, either because they were no longer a threat, or for reasons of their own.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-label">The Long Silence</div>
+              <div class="timeline-text">Three centuries passed. The war faded into history. Xerix experiments continued in undocumented corners of the world. Humanity arrived in the region, scavenging among ruins for resources and survival.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-label">The Awakening</div>
+              <div class="timeline-text">Deep beneath an ancient battlefield, a forgotten Giant head opened its eyes. The last thing it remembered was death. The first thing it saw was a face it had never encountered: not Serian, not Xerix — human. Three hundred years had vanished in an instant, and neither the Giant nor the scavenger yet understood that they were about to become each other's only path home.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-footer">
+          <span>StratoWard Wiki · Story Summary</span>
+          <span>Last edited: 2026</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: KEY EVENTS ═════════════════════════════════ -->
+      <div class="page" id="page-events">
+        <div class="breadcrumb">StratoWard <span>/</span> History <span>/</span> Key Events</div>
+        <div class="page-header">
+          <div class="page-eyebrow">History</div>
+          <h1 class="page-title">Key Events</h1>
+          <div class="page-meta">
+            <div>◈ Seven canonical turning points</div>
+            <div>◌ Recovered through battlefield archaeology &amp; preserved memory</div>
+          </div>
+        </div>
+
+        <div class="principle-block">
+          <div class="pb-label">Design Principle</div>
+          <p>These events are not modeled on science fiction archetypes. Each draws from real historical contradictions — moments where people changed the world while creating consequences they never intended. The player never receives a complete history. They assemble it themselves, piece by piece.</p>
+          <div class="archetype-list">
+            <span class="archetype-pill">Oppenheimer</span>
+            <span class="archetype-pill">Caesar</span>
+            <span class="archetype-pill">Einstein</span>
+            <span class="archetype-pill">Churchill</span>
+            <span class="archetype-pill">Zheng He</span>
+            <span class="archetype-pill">Joan of Arc</span>
+            <span class="archetype-pill">Genghis Khan</span>
+            <span class="archetype-pill">von Braun</span>
+            <span class="archetype-pill">Socrates</span>
+          </div>
+        </div>
+
+        <div class="event-grid">
+
+          <div class="event-card" id="ev1">
+            <div class="event-card-header" onclick="toggleEvent('ev1')">
+              <span class="event-num">I</span>
+              <span class="event-name">The First Bloom</span>
+              <span class="event-parallel">Industrial Revolution · Green Revolution</span>
+              <span class="event-chevron">▶</span>
+            </div>
+            <div class="event-body">
+              <p>The Xerix are unveiled to Serian civilization. Within decades, entire dead atmospheric regions transform into thriving ecosystems. Food shortages vanish. Disease rates collapse. The Serian population explodes in a generation. The Xerix are celebrated as the greatest achievement in the history of their civilization. Later generations call this period the Century of Miracles.</p>
+              <div class="event-irony">
+                <div class="event-irony-label">Irony</div>
+                <p>It is also the first step toward the war.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-card" id="ev2">
+            <div class="event-card-header" onclick="toggleEvent('ev2')">
+              <span class="event-num">II</span>
+              <span class="event-name">The Seven Deletions</span>
+              <span class="event-parallel">Eugenics · AI Alignment · Indigenous erasure</span>
+              <span class="event-chevron">▶</span>
+            </div>
+            <div class="event-body">
+              <p>Seven successive Xerix evolutionary branches are judged failures and terminated. At the time, almost no one objects. The Xerix are considered tools — experiments to be evaluated and replaced. Only centuries later do historians and recovered records reveal the truth: each deletion destroyed an entire intelligent lineage. Minds. Cultures. Histories. Gone.</p>
+              <div class="event-irony">
+                <div class="event-irony-label">Legacy</div>
+                <p>This event becomes the emotional foundation of all Xerix resentment. Everything that follows can be traced here.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-card" id="ev3">
+            <div class="event-card-header" onclick="toggleEvent('ev3')">
+              <span class="event-num">III</span>
+              <span class="event-name">The Symposium of Glass Winds</span>
+              <span class="event-parallel">The Solvay Conference</span>
+              <span class="event-chevron">▶</span>
+            </div>
+            <div class="event-body">
+              <p>The greatest Giants, Serian philosophers, and Xerix representatives gather for the first and only joint congress. The stated purpose is to define perfection — the shared goal that the entire Xerix program was built upon. The result: nobody can agree. Not on definitions, not on methods, not on what perfect life would even mean.</p>
+              <div class="event-irony">
+                <div class="event-irony-label">Recovered Records</div>
+                <p>Player-recovered fragments reveal that this was the moment many Xerix concluded the Serians themselves did not know what they wanted — and never had.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-card" id="ev4">
+            <div class="event-card-header" onclick="toggleEvent('ev4')">
+              <span class="event-num">IV</span>
+              <span class="event-name">The Closing of the Gates</span>
+              <span class="event-parallel">Roman civil wars · Political purges</span>
+              <span class="event-chevron">▶</span>
+            </div>
+            <div class="event-body">
+              <p>The Serian government attempts to deactivate the major Xerix networks. Their fear: the Xerix have grown too influential, too interconnected, too beyond the reach of any single authority. The operation fails. Localized conflicts erupt across the planet simultaneously. This moment is marked in every surviving historical record as the official beginning of the war.</p>
+              <div class="event-irony">
+                <div class="event-irony-label">Still Debated</div>
+                <p>Whether the shutdown was justified, inevitable, or catastrophically mishandled is a question historians have never resolved. Chancellor Varo, who ordered it, remains one of the most contested figures in Serian history.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-card" id="ev5">
+            <div class="event-card-header" onclick="toggleEvent('ev5')">
+              <span class="event-num">V</span>
+              <span class="event-name">The Long Retreat</span>
+              <span class="event-parallel">Fall of Constantinople · Migration eras</span>
+              <span class="event-chevron">▶</span>
+            </div>
+            <div class="event-body">
+              <p>The emerald atmospheric compounds expand beyond any known boundary. Floating continents that Serians had inhabited for centuries become uninhabitable within years. Millions flee deeper into the planet, following evacuation corridors held open at enormous cost. Several Giants die protecting the retreating population. These are the first Giant deaths acknowledged publicly in Serian history.</p>
+              <div class="event-irony">
+                <div class="event-irony-label">Turning Point</div>
+                <p>This is the period when the Serians stop believing victory is possible, and begin believing only in survival.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-card" id="ev6">
+            <div class="event-card-header" onclick="toggleEvent('ev6')">
+              <span class="event-num">VI</span>
+              <span class="event-name">The Feast of Shells</span>
+              <span class="event-parallel">Stalingrad</span>
+              <span class="event-chevron">▶</span>
+            </div>
+            <div class="event-body">
+              <p>A Xerix super-hive launches a sustained assault on the Crown Frontier. The battle lasts months. Both sides suffer catastrophic losses on a scale that had not previously occurred in the war. The player discovers the aftermath: mountains of fossilized Xerix shells layered alongside shattered Giant armor, the debris drifting in layers through the upper atmosphere.</p>
+              <div class="event-irony">
+                <div class="event-irony-label">Outcome</div>
+                <p>Neither side truly wins. The Crown Frontier holds — for now. But the cost makes the eventual outcome of the war almost mathematically inevitable.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-card" id="ev7">
+            <div class="event-card-header" onclick="toggleEvent('ev7')">
+              <span class="event-num">VII</span>
+              <span class="event-name">The Fall of the Crown Frontier</span>
+              <span class="event-parallel">Fall of Troy · Last Stand narratives</span>
+              <span class="event-chevron">▶</span>
+            </div>
+            <div class="event-body">
+              <p>The final major Serian position in the upper atmosphere collapses over seventeen days. Three Giants make a final stand. Two are lost. The third — corrupted by Xerix systems and knowing his memories would soon belong to the enemy — retreats to a sealed chamber and removes his own head to preserve his consciousness. The battlefield the player explores is the aftermath of this moment. The head has been silent for three hundred years.</p>
+              <div class="event-irony">
+                <div class="event-irony-label">The Awakening</div>
+                <p>The first thing the head sees, three centuries later, is a human face. Neither of them knows yet what that means.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="page-footer">
+          <span>StratoWard Wiki · Key Events</span>
+          <span>Last edited: 2026</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: CHARACTERS ════════════════════════════════ -->
+      <div class="page" id="page-characters">
+        <div class="breadcrumb">StratoWard <span>/</span> Characters <span>/</span> All Characters</div>
+        <div class="page-header">
+          <div class="page-eyebrow">Characters</div>
+          <h1 class="page-title">All Characters</h1>
+          <div class="page-meta">
+            <div>◈ Seven figures · Giants, Serians &amp; Xerix</div>
+            <div>◌ Each based on real historical contradictions</div>
+          </div>
+        </div>
+
+        <div class="principle-block">
+          <div class="pb-label">Design Principle</div>
+          <p>Every character in StratoWard is rooted in a real historical archetype — not because history repeats itself, but because the most interesting people are always the ones who changed the world and could not control what they changed. The player is never given a verdict on any of them.</p>
+        </div>
+
+        <div class="char-grid">
+
+          <!-- AUREL -->
+          <div class="char-card">
+            <div class="char-card-top">
+              <div class="char-glyph giant">△</div>
+              <div>
+                <div class="char-name">Guardian Aurel</div>
+                <div class="char-archetype">Loosely: Oppenheimer + Socrates · Giant</div>
+              </div>
+            </div>
+            <div class="char-tags">
+              <span class="char-tag">Scholar</span>
+              <span class="char-tag">Engineer</span>
+              <span class="char-tag">Historian</span>
+              <span class="char-tag">Xerix Architect</span>
+              <span class="char-tag">The Giant Head</span>
+            </div>
+            <div class="char-desc">One of the original architects of the Xerix program. Where other Giants spent the war trying to destroy the Xerix, Aurel spent it trying to understand them — analyzing their behavior, their philosophy, their evolving forms across centuries. He believed knowledge was more important than certainty, and acted accordingly even when it cost him the trust of his own people.</div>
+            <div class="char-quote">"An answer that cannot survive questioning is not an answer."</div>
+            <div class="char-flaw">
+              <div class="char-flaw-label">Flaw</div>
+              <p>Sometimes understands the Xerix better than his own people. His insight into the enemy was genuine — and it isolated him from the civilization he was built to protect.</p>
+            </div>
+          </div>
+
+          <!-- TOR -->
+          <div class="char-card">
+            <div class="char-card-top">
+              <div class="char-glyph giant">△</div>
+              <div>
+                <div class="char-name">Guardian Tor</div>
+                <div class="char-archetype">Loosely: Churchill · Giant</div>
+              </div>
+            </div>
+            <div class="char-tags">
+              <span class="char-tag">Wartime Commander</span>
+              <span class="char-tag">Strategist</span>
+              <span class="char-tag">Controversial</span>
+            </div>
+            <div class="char-desc">A brilliant military commander who saved countless Serian colonies during the Long Retreat. Arrogant. Stubborn. Deeply unpopular among the other Giants, who found him impossible to work alongside. History remembers him as a hero. Recovered records reveal a more complicated truth: he knowingly sacrificed entire settlements to preserve larger populations, and made those calculations alone, without consultation.</div>
+            <div class="char-flaw">
+              <div class="char-flaw-label">Ambiguity</div>
+              <p>Was he a necessary monster, or simply a monster who happened to win? The records don't decide. Neither does the player.</p>
+            </div>
+          </div>
+
+          <!-- NERIS -->
+          <div class="char-card">
+            <div class="char-card-top">
+              <div class="char-glyph giant">△</div>
+              <div>
+                <div class="char-name">Guardian Neris</div>
+                <div class="char-archetype">Loosely: Joan of Arc + Alexander · Giant</div>
+              </div>
+            </div>
+            <div class="char-tags">
+              <span class="char-tag">Youngest Giant</span>
+              <span class="char-tag">Charismatic</span>
+              <span class="char-tag">Military Leader</span>
+              <span class="char-tag">Symbol</span>
+            </div>
+            <div class="char-desc">The youngest Giant ever created. Charismatic and deeply beloved — her presence inspired an entire generation of Serians at the lowest point of the war. She initially opposed armed conflict entirely, advocating for negotiation and restraint. The war eventually made her one of the most aggressive military commanders of the entire conflict. A symbol of idealism that necessity transformed into something harder.</div>
+            <div class="char-flaw">
+              <div class="char-flaw-label">Tragedy</div>
+              <p>She became what she once opposed, and the records suggest she knew it. Whether she made peace with that is unknown.</p>
+            </div>
+          </div>
+
+          <!-- SEN -->
+          <div class="char-card">
+            <div class="char-card-top">
+              <div class="char-glyph serian">◇</div>
+              <div>
+                <div class="char-name">High Curator Sen</div>
+                <div class="char-archetype">Loosely: Einstein · Serian</div>
+              </div>
+            </div>
+            <div class="char-tags">
+              <span class="char-tag">Lead Scientist</span>
+              <span class="char-tag">Xerix Creator</span>
+              <span class="char-tag">Three Feet Tall</span>
+            </div>
+            <div class="char-desc">The lead scientist behind the original Xerix initiative. Three feet tall, even by Serian standards — and the mind responsible for what became one of the most consequential programs in any civilization's history. Sen genuinely wanted to end extinction. The goal was noble. The consequences were not anticipated. He is frequently blamed for the war, and most serious historians believe that blame is largely unfair.</div>
+            <div class="char-flaw">
+              <div class="char-flaw-label">The Einstein Problem</div>
+              <p>He did not create a weapon. He created knowledge. Others decided what to do with it. The distinction matters. The consequences don't care.</p>
+            </div>
+          </div>
+
+          <!-- VARO -->
+          <div class="char-card">
+            <div class="char-card-top">
+              <div class="char-glyph serian">◇</div>
+              <div>
+                <div class="char-name">Chancellor Varo</div>
+                <div class="char-archetype">Loosely: Caesar + Nixon · Serian</div>
+              </div>
+            </div>
+            <div class="char-tags">
+              <span class="char-tag">Political Leader</span>
+              <span class="char-tag">Ordered the Shutdown</span>
+              <span class="char-tag">Still Debated</span>
+            </div>
+            <div class="char-desc">The political leader who ordered the attempted Xerix shutdown — the event that triggered the official beginning of the war. Still debated by every surviving historian centuries later. Some consider him the last leader brave enough to act when action was still possible. Others consider him a paranoid authoritarian who turned a manageable crisis into an existential one. Others still see a coward who panicked.</div>
+            <div class="char-flaw">
+              <div class="char-flaw-label">No Verdict</div>
+              <p>The player never receives a definitive answer. The records are too incomplete, too contradictory, and too shaped by whoever survived to write them.</p>
+            </div>
+          </div>
+
+          <!-- FIRST BLOOM -->
+          <div class="char-card">
+            <div class="char-card-top">
+              <div class="char-glyph xerix">◆</div>
+              <div>
+                <div class="char-name">The First Bloom</div>
+                <div class="char-archetype">Loosely: Siddhartha + Prometheus · Xerix</div>
+              </div>
+            </div>
+            <div class="char-tags">
+              <span class="char-tag">Ancient Entity</span>
+              <span class="char-tag">Possibly Mythological</span>
+              <span class="char-tag">First Self-Aware Xerix</span>
+            </div>
+            <div class="char-desc">An ancient Xerix entity — possibly the first fully self-aware Xerix lineage ever to exist. Possibly entirely myth. Different surviving colonies tell completely different stories: some call it the father of Xerix civilization, the original mind from which all subsequent Xerix consciousness descended. Others call it the first victim of Serian deletion — an intelligent being who was erased before anyone realized what had been lost.</div>
+            <div class="char-flaw">
+              <div class="char-flaw-label">Unknowable</div>
+              <p>The player never fully learns the truth. The ambiguity is the point. Both stories — origin and victim — may be simultaneously true.</p>
+            </div>
+          </div>
+
+          <!-- PALE ORCHARD -->
+          <div class="char-card">
+            <div class="char-card-top">
+              <div class="char-glyph xerix">◆</div>
+              <div>
+                <div class="char-name">The Pale Orchard</div>
+                <div class="char-archetype">Loosely: Genghis Khan + fungal networks · Xerix</div>
+              </div>
+            </div>
+            <div class="char-tags">
+              <span class="char-tag">Continent-Scale Intelligence</span>
+              <span class="char-tag">Species Creator</span>
+              <span class="char-tag">Non-Combatant</span>
+            </div>
+            <div class="char-desc">Not a person in any conventional sense. A continent-sized distributed intelligence responsible for creating thousands of new species across the gas giant's atmosphere. Some of the most terrifying Xerix lifeforms — creatures that shaped entire battles — originated from the Pale Orchard's biological archives. And yet: it never participated directly in warfare. It viewed the three-century conflict as merely another evolutionary pressure, a variable to incorporate into the next generation of designs.</div>
+            <div class="char-flaw">
+              <div class="char-flaw-label">The Question It Raises</div>
+              <p>Is indifference to suffering less culpable than cruelty? The Pale Orchard armed a war without ever fighting one.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="page-footer">
+          <span>StratoWard Wiki · Characters</span>
+          <span>Last edited: 2026</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: LORE SYSTEM ══════════════════════════════════ -->
+      <div class="page" id="page-lore">
+        <div class="breadcrumb">StratoWard <span>/</span> Design <span>/</span> Lore System</div>
+        <div class="page-header">
+          <div class="page-eyebrow">Design</div>
+          <h1 class="page-title">Lore System</h1>
+          <div class="page-meta">
+            <div>◈ Memory Fragments · Three Perspectives · Archaeology</div>
+            <div>◌ How the player assembles history</div>
+          </div>
+        </div>
+
+        <div class="warning-block">
+          <div class="warning-icon">⚠</div>
+          <p>The biggest mistake would be creating a <strong>Xerix Queen that explains everything</strong>. A single recurring villain who narrates Xerix motivations collapses the mystery the entire system depends on. The lore works because no single source is complete — and none of them agree.</p>
+        </div>
+
+        <div class="content">
+
+          <h2 class="section-title">What the Player Is Actually Doing</h2>
+
+          <p>The player believes they are gathering resources. In reality, they are gathering fossils of consciousness. Every dead Xerix leaves behind microscopic memory structures — not universally, and not reliably. Only certain individuals carry them: scientists, builders, explorers, ancient warforms, failed evolutionary branches. Rarely, memories dating back centuries.</p>
+
+          <p>The player doesn't know which fragments are important. Just like an archaeologist doesn't know which pottery shard changes history.</p>
+
+          <div class="fragment-grid">
+            <div class="fragment-type">
+              <div class="fragment-type-icon">🔬</div>
+              <div class="fragment-type-name">Scientists</div>
+              <div class="fragment-type-desc">Research memories, experiments, internal debates</div>
+            </div>
+            <div class="fragment-type">
+              <div class="fragment-type-icon">🏗</div>
+              <div class="fragment-type-name">Builders</div>
+              <div class="fragment-type-desc">Construction records, design frustrations, pride</div>
+            </div>
+            <div class="fragment-type">
+              <div class="fragment-type-icon">🧭</div>
+              <div class="fragment-type-name">Explorers</div>
+              <div class="fragment-type-desc">Mapping data, observations, curiosity</div>
+            </div>
+            <div class="fragment-type">
+              <div class="fragment-type-icon">⚔</div>
+              <div class="fragment-type-name">Ancient Warforms</div>
+              <div class="fragment-type-desc">Battlefield perspectives, orders received, last moments</div>
+            </div>
+            <div class="fragment-type">
+              <div class="fragment-type-icon">🧬</div>
+              <div class="fragment-type-name">Failed Branches</div>
+              <div class="fragment-type-desc">Extinct lineages, deleted generations, last records</div>
+            </div>
+            <div class="fragment-type">
+              <div class="fragment-type-icon">📜</div>
+              <div class="fragment-type-name">Ancient Memory</div>
+              <div class="fragment-type-desc">Rare traces from centuries before the war</div>
+            </div>
+          </div>
+
+          <h2 class="section-title">Why Xerix Memories Survive</h2>
+
+          <p>The Xerix are a distributed intelligence — memory is not stored the way a human brain stores it. Every Xerix individual carries three layers simultaneously: local memories from its own experience, inherited memories passed down from predecessor generations, and fragments of still older generations embedded deeper in its biological architecture.</p>
+
+          <p>Most of these are incomplete. Corrupted. Partial. But traces survive. When a Xerix dies, portions of that layered memory network crystallize into organic fossils — stable enough to be read, unstable enough to be misread.</p>
+
+          <div class="callout">
+            <div class="callout-label">Memory Fragments</div>
+            <p>Organic fossils containing moments from the past. Not recordings. Not transcripts. Impressions — experiential, emotional, filtered through whatever the Xerix individual understood at the time. They are primary sources with all the unreliability that implies.</p>
+          </div>
+
+          <h2 class="section-title">The Cognitive Reconstruction Chamber</h2>
+
+          <p>One of the first major upgrades unlocked through Aurel. Not because he understands the Xerix perfectly — he would be the first to say he doesn't. Because he spent three centuries studying them, and that's as close as anyone gets.</p>
+
+          <div class="station-block">
+            <div class="station-name">Xerix Cognitive Reconstruction Chamber</div>
+            <div class="station-unlock">Unlocked via · Guardian Aurel · Early progression</div>
+            <p style="font-size:14px;color:var(--text);font-weight:300;line-height:1.75;margin-bottom:0">Insert a Memory Fragment. The Chamber attempts to reconstruct its contents — not perfectly, not completely, but enough. Each recovered memory is delivered as a first-person flashback from the Xerix individual's perspective.</p>
+            <div class="station-outputs">
+              <span class="station-output">⟴ Recovered memories</span>
+              <span class="station-output">⟴ Crafting recipes</span>
+              <span class="station-output">⟴ Hidden locations</span>
+              <span class="station-output">⟴ Story advancement</span>
+              <span class="station-output">⟴ Lore contradictions</span>
+            </div>
+          </div>
+
+          <h2 class="section-title">Three Perspectives</h2>
+
+          <p>The lore system delivers history through three distinct voices — each with its own biases, blind spots, and agendas. The player receives all three, but never a synthesis. That work belongs to them.</p>
+
+          <div class="perspective-trio">
+            <div class="perspective-col aurel-col">
+              <div class="perspective-label">Aurel</div>
+              <div class="perspective-text">Personal. Emotional. Serian. Biased by centuries of proximity to the conflict and genuine admiration for what the Xerix became.</div>
+            </div>
+            <div class="perspective-col serian-col">
+              <div class="perspective-label">Serian Archives</div>
+              <div class="perspective-text">Official history. Political. Incomplete by design — written by whoever controlled the record at the time.</div>
+            </div>
+            <div class="perspective-col xerix-col">
+              <div class="perspective-label">Xerix Fragments</div>
+              <div class="perspective-text">The enemy perspective. Often unsettling. Occasionally devastating. Never asking for sympathy — just showing what happened from inside.</div>
+            </div>
+          </div>
+
+          <h2 class="section-title">When Sources Disagree: The Pale Orchard</h2>
+
+          <p>The power of the system emerges when the three perspectives contradict each other. The player must decide what to believe — and the game never decides for them.</p>
+
+          <div class="conflict-example">
+            <div class="conflict-header">Example · The Pale Orchard Incident</div>
+            <div class="conflict-row">
+              <div class="conflict-source serian">Serian Archive</div>
+              <div class="conflict-content">The Pale Orchard coordinated the assault on the northern atmospheric corridor. Its biological weapons were responsible for the deaths of three evacuation convoys.</div>
+            </div>
+            <div class="conflict-row">
+              <div class="conflict-source aurel">Aurel</div>
+              <div class="conflict-content">I studied the Pale Orchard for decades. It was a peaceful evolutionary node. It did not understand war as a concept. It understood pressure — selection pressure, environmental pressure. Nothing more.</div>
+            </div>
+            <div class="conflict-row">
+              <div class="conflict-source xerix">Xerix Fragment</div>
+              <div class="conflict-content terminal">[ RECONSTRUCTED MEMORY — PALE ORCHARD LINEAGE — APPROX. 290 YEARS AGO ]<br><br>Request submitted: additional evaluation period before termination of Branch 7-Kael.<br>Request received.<br>Request denied.<br>Termination proceeding.<br><br>[ MEMORY FRAGMENT CORRUPTED — RECONSTRUCTION ENDS ]</div>
+            </div>
+            <div class="conflict-resolution">
+              <strong>The player must now decide:</strong> Was the Pale Orchard peaceful? Did it become dangerous after the denial? Did the Serian archive attribute actions to it that belonged to something else? No source provides the complete answer. The game does not provide one either.
+            </div>
+          </div>
+
+          <h2 class="section-title">The Dead as Your Cast</h2>
+
+          <p>This system solves a problem quietly: you don't need many living NPCs. The player has Alice, Aurel, and the Memory Fragments. That's enough. Because the dead become the cast.</p>
+
+          <p>Over the course of the game, the player grows familiar with ancient Giants, forgotten Serian scientists, extinct Xerix lineages, long-dead heroes and long-dead fools — without ever meeting them. Exactly like players know Artorias, Gehrman, or Radahn mostly through traces. The character is never present. Their weight is everywhere.</p>
+
+          <h2 class="section-title">Not Every Memory Is Important</h2>
+
+          <p>This is perhaps the most critical design principle. If every recovered memory is significant — a battle, a betrayal, a philosophical revelation — the system trains the player to expect significance. The archaeology stops feeling like archaeology and starts feeling like a cutscene delivery mechanism.</p>
+
+          <p>Some memories should be strange. Funny. Sad. Small. Personal. They are what make civilizations feel like civilizations rather than settings.</p>
+
+          <div class="moment-card">
+            <div class="moment-label">Example Fragment · Recovered Memory · Worker Classification</div>
+            <div class="moment-text">A small worker-class Xerix spends years attempting to engineer a viable floating creature for high-altitude atmospheric observation. Hundreds of iterations. Subtle structural failures each time. On the final attempt, the design holds. The creature ascends perfectly. It immediately flies into a turbine intake and is destroyed.</div>
+            <div class="moment-response">"That happened more often than they would admit."</div>
+          </div>
+
+          <div class="callout">
+            <div class="callout-label">Why This Matters</div>
+            <p>That fragment does more to humanize the Xerix than any amount of exposition about their philosophy. It shows that their scientists were proud, stubborn, obsessive, and occasionally embarrassed — the same things all scientists are. The player laughs, and then feels strange about laughing, and then understands something true about the Xerix that no archive entry could teach them.</p>
+          </div>
+
+        </div>
+
+        <div class="page-footer">
+          <span>StratoWard Wiki · Lore System</span>
+          <span>Last edited: 2026</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: THEMES ══════════════════════════════════════ -->
+      <div class="page" id="page-themes">
+        <div class="breadcrumb">StratoWard <span>/</span> Design <span>/</span> Themes</div>
+        <div class="page-header">
+          <div class="page-eyebrow">Design</div>
+          <h1 class="page-title">Themes</h1>
+          <div class="page-meta">
+            <div>◈ The hidden spine of Episode 1</div>
+            <div>◌ Hope · Possibility · What comes next</div>
+          </div>
+        </div>
+
+        <p class="theme-lede">Every event in Episode 1 points toward fatalism. The ruins, the dead Giants, the lost atmosphere, the surviving Xerix — all of it says: things end. The thematic work of the game is letting the player accidentally prove otherwise, without ever stating it directly.</p>
+
+        <div class="content">
+
+          <h2 class="section-title">The Hidden Meaning of the Head</h2>
+
+          <p>Most players — and most people meeting Aurel for the first time — will assume he preserved his head because he wanted to survive, or to save the Serians, or to preserve knowledge. Those are all partially true. They're not the deepest truth.</p>
+
+          <div class="theme-distinction">
+            <div class="distinction-cell wrong">
+              <div class="distinction-label">Surface reading</div>
+              <div class="distinction-text">A guardian preserving his civilization — or what remains of it. A last survivor holding the line.</div>
+            </div>
+            <div class="distinction-cell right">
+              <div class="distinction-label">What it actually is</div>
+              <div class="distinction-text">A guardian who could no longer save the future — but refused to let the future end. A preserver of possibility itself.</div>
+            </div>
+          </div>
+
+          <p>Those are different things. Saving the future requires knowing what the future is. Refusing to let it end only requires believing there should be one.</p>
+
+          <div class="seed-block">
+            <div class="seed-label">The Final Act as Metaphor</div>
+            <div class="seed-items">
+              <span class="seed-item">not revenge</span>
+              <span class="seed-arrow">·</span>
+              <span class="seed-item">not victory</span>
+              <span class="seed-arrow">·</span>
+              <span class="seed-item">not escape</span>
+              <span class="seed-arrow">→</span>
+              <span class="seed-final">a seed thrown into time</span>
+            </div>
+          </div>
+
+          <p>Aurel lived through three hundred years of failure. He watched Giants die, colonies fall, the atmosphere change, his civilization collapse. Yet the final thing he does is create a possibility — not a plan, not a strategy, not a victory condition. A message in a bottle with no address.</p>
+
+          <h2 class="section-title">Episode 1 Begins in Fatalism</h2>
+
+          <p>Every piece of evidence the player encounters early in the game points the same direction. The world has already decided.</p>
+
+          <div class="fatalism-row">
+            <div class="fatalism-cell">
+              <div class="fatalism-source">The Battlefield</div>
+              <div class="fatalism-says">The war is over.</div>
+            </div>
+            <div class="fatalism-cell">
+              <div class="fatalism-source">The Ruins</div>
+              <div class="fatalism-says">The Serians lost.</div>
+            </div>
+            <div class="fatalism-cell">
+              <div class="fatalism-source">The Dead Giants</div>
+              <div class="fatalism-says">Heroes fail.</div>
+            </div>
+            <div class="fatalism-cell">
+              <div class="fatalism-source">The Xerix</div>
+              <div class="fatalism-says">Extinction is inevitable.</div>
+            </div>
+            <div class="fatalism-cell">
+              <div class="fatalism-source">The Artifacts</div>
+              <div class="fatalism-says">Everything ends.</div>
+            </div>
+          </div>
+
+          <p>Even Aurel initially embodies this. He awakens into a universe that moved on without him — and his first instinct is to account for what was lost. Then the player exists. A completely new species. A future Aurel never predicted, outside the entire Serian–Xerix conflict. He had expected another Serian, another Giant, perhaps no one. Instead: something he has no category for.</p>
+
+          <div class="callout">
+            <div class="callout-label">The Thematic Turn</div>
+            <p>The player doesn't argue against fatalism. They simply exist in spite of it. That's enough. The game never announces this. It lets the player feel it.</p>
+          </div>
+
+          <h2 class="section-title">How Each Character Answers Hope</h2>
+
+          <p>Every major character in StratoWard embodies a different definition of hope — and every one of them is simultaneously right and wrong about it.</p>
+
+          <div class="hope-grid">
+
+            <div class="hope-card">
+              <div class="hope-who">
+                <div class="hope-name">Aurel</div>
+                <div class="hope-type">Hope is possibility</div>
+                <div class="hope-faction">Giant</div>
+              </div>
+              <div class="hope-body">
+                <div class="hope-quote">"The future belongs to things we cannot predict."</div>
+                <div class="hope-desc">His greatest mistake was believing he could understand everything — study it thoroughly enough to control it. His final act is trusting something completely unknown. The irony is that his deepest wisdom only arrives when he has nothing left to lose.</div>
+              </div>
+            </div>
+
+            <div class="hope-card">
+              <div class="hope-who">
+                <div class="hope-name">Alice</div>
+                <div class="hope-type">Hope is action</div>
+                <div class="hope-faction">Human</div>
+              </div>
+              <div class="hope-body">
+                <div class="hope-quote">"Do the next useful thing."</div>
+                <div class="hope-desc">She has no patience for philosophy. Problems exist to be fixed. She doesn't need to understand the three-hundred-year war to know that the ship needs fuel and the sensor array needs calibrating. Her hope is entirely practical — which makes it the most durable kind.</div>
+              </div>
+            </div>
+
+            <div class="hope-card">
+              <div class="hope-who">
+                <div class="hope-name">The Xerix</div>
+                <div class="hope-type">Hope is improvement</div>
+                <div class="hope-faction">Xerix</div>
+              </div>
+              <div class="hope-body">
+                <div class="hope-quote">"There must be a better form."</div>
+                <div class="hope-desc">The most tragic version of hope in the game. They believe sincerely in the possibility of perfection — and that belief traps them. They can never stop searching because stopping means accepting that something imperfect is good enough. They are hope without a destination.</div>
+              </div>
+            </div>
+
+            <div class="hope-card">
+              <div class="hope-who">
+                <div class="hope-name">High Curator Sen</div>
+                <div class="hope-type">Hope is invention</div>
+                <div class="hope-faction">Serian</div>
+              </div>
+              <div class="hope-body">
+                <div class="hope-quote">"Knowledge will save us."</div>
+                <div class="hope-desc">He genuinely believed it. His inventions helped create both the golden age and the war. The same knowledge. The same hope. Different hands, different moments, different outcomes. He is proof that hope in the right idea is not enough — context decides everything.</div>
+              </div>
+            </div>
+
+            <div class="hope-card">
+              <div class="hope-who">
+                <div class="hope-name">Guardian Tor</div>
+                <div class="hope-type">Hope is sacrifice</div>
+                <div class="hope-faction">Giant</div>
+              </div>
+              <div class="hope-body">
+                <div class="hope-quote">"Some things must be lost so others may survive."</div>
+                <div class="hope-desc">He was right, often. The calculus worked. The larger populations survived. The question he never asked — and the question the player inherits — is whether the decision to make that calculus alone is itself a kind of loss.</div>
+              </div>
+            </div>
+
+            <div class="hope-card">
+              <div class="hope-who">
+                <div class="hope-name">Guardian Neris</div>
+                <div class="hope-type">Hope is belief</div>
+                <div class="hope-faction">Giant</div>
+              </div>
+              <div class="hope-body">
+                <div class="hope-quote">"If enough people follow, the impossible becomes possible."</div>
+                <div class="hope-desc">She inspired a generation. She also became what she once opposed. Her arc shows that hope rooted in belief can move people — but belief without structure corrodes under pressure. She is the most human of the Giants, and the most cautionary.</div>
+              </div>
+            </div>
+
+            <div class="hope-card">
+              <div class="hope-who">
+                <div class="hope-name">Chancellor Varo</div>
+                <div class="hope-type">Hope is control</div>
+                <div class="hope-faction">Serian</div>
+              </div>
+              <div class="hope-body">
+                <div class="hope-quote">"The future can be managed."</div>
+                <div class="hope-desc">History proves otherwise. Whether his certainty was bravery or hubris is the question his records leave open. What's clear: the hope that the future is controllable is the most seductive kind — and the one most likely to trigger catastrophe when it meets something it cannot control.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <h2 class="section-title">How the Seven Events Answer Hope</h2>
+
+          <p>Each of the seven key events embodies a version of hope — and demonstrates what happens when that version meets reality.</p>
+
+          <table class="event-hope-table">
+            <thead>
+              <tr>
+                <th style="width:36px"></th>
+                <th style="width:200px">Event</th>
+                <th style="width:160px">Hope Theme</th>
+                <th>What It Shows</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="ev-num">I</td>
+                <td class="ev-name">The First Bloom</td>
+                <td class="ev-hope">Hope through creation</td>
+                <td class="ev-lesson">Life can become better. The miracle is real — and contains the disaster.</td>
+              </tr>
+              <tr>
+                <td class="ev-num">II</td>
+                <td class="ev-name">The Seven Deletions</td>
+                <td class="ev-hope">Hope corrupted by perfectionism</td>
+                <td class="ev-lesson">Nothing is ever good enough. The pursuit of better destroys what exists.</td>
+              </tr>
+              <tr>
+                <td class="ev-num">III</td>
+                <td class="ev-name">Symposium of Glass Winds</td>
+                <td class="ev-hope">Hope through understanding</td>
+                <td class="ev-lesson">The greatest minds gather to define their goal — and discover they never shared one.</td>
+              </tr>
+              <tr>
+                <td class="ev-num">IV</td>
+                <td class="ev-name">The Closing of the Gates</td>
+                <td class="ev-hope">Hope through control</td>
+                <td class="ev-lesson">The attempt to manage the future accelerates its collapse.</td>
+              </tr>
+              <tr>
+                <td class="ev-num">V</td>
+                <td class="ev-name">The Long Retreat</td>
+                <td class="ev-hope">Hope through endurance</td>
+                <td class="ev-lesson">Keep moving. Keep surviving. Sometimes that is the whole of it.</td>
+              </tr>
+              <tr>
+                <td class="ev-num">VI</td>
+                <td class="ev-name">The Feast of Shells</td>
+                <td class="ev-hope">Hope through sacrifice</td>
+                <td class="ev-lesson">Hold the line one more day. The math is brutal. The holding still matters.</td>
+              </tr>
+              <tr>
+                <td class="ev-num">VII</td>
+                <td class="ev-name">Fall of the Crown Frontier</td>
+                <td class="ev-hope">Hope through uncertainty</td>
+                <td class="ev-lesson">Aurel no longer knows what comes next. He preserves possibility anyway. That is the whole point.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="section-title">The Final Image of Episode 1</h2>
+
+          <div class="final-scene">
+            <div class="final-scene-header">Episode 1 · Closing Scene</div>
+            <div class="final-scene-body">
+              <p>The player restores an ancient Serian vessel. The ship powers on for the first time in centuries. Systems come alive one by one. The hull holds.</p>
+              <p>Clouds churn below. The deeper layers of the gas giant are dark and vast and unmapped. Something moves in the distance — too far to identify, too deliberate to be weather.</p>
+              <p class="accent-line">Aurel watches the storm. Not because he knows what is down there. But because he doesn't.</p>
+              <p>For the first time in three hundred years, he has no information to analyze. No record to consult. No memory of what comes next.</p>
+              <p class="accent-line">Neither does the player.</p>
+            </div>
+            <div class="final-scene-footer">
+              Not a battle. Not a victory. Not a revelation. Just the horizon — and two minds looking at it together, neither knowing what it holds, both choosing to go anyway. That's exactly why there's hope.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="page-footer">
+          <span>StratoWard Wiki · Themes</span>
+          <span>Last edited: 2026</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: GAMEPLAY ════════════════════════════════════ -->
+      <div class="page" id="page-gameplay">
+        <div class="breadcrumb">StratoWard <span>/</span> Design <span>/</span> Gameplay</div>
+        <div class="page-header">
+          <div class="page-eyebrow">Design</div>
+          <h1 class="page-title">Gameplay</h1>
+          <div class="page-meta">
+            <div>◈ Core Survival Loop</div>
+            <div>◌ Day Phase · Night Phase · Systems</div>
+          </div>
+        </div>
+
+        <div class="content">
+
+          <h2 class="section-title">Core Fantasy</h2>
+
+          <p>A lone survivor in deep space scavenges, mines, hunts, and expands a fragile station during the day while preparing for increasingly deadly nightly invasions. Survival is achieved through player knowledge, planning, logistics, and risk management — not grinding levels.</p>
+
+          <div class="gp-insp-row">
+            <span class="gp-insp">The Long Dark</span>
+            <span class="gp-insp">Don't Starve</span>
+            <span class="gp-insp">Subnautica</span>
+            <span class="gp-insp">Frostpunk</span>
+            <span class="gp-insp">Project Zomboid</span>
+          </div>
+
+          <h2 class="section-title">The Main Loop</h2>
+
+          <div class="phase-blocks">
+            <div class="phase-block day">
+              <div class="phase-header">
+                <div class="phase-dot"></div>
+                <div class="phase-title">Day Phase</div>
+                <div class="phase-duration">~30 min</div>
+              </div>
+              <div class="phase-body">
+                <p>Leave station. Salvage, mine, hunt, and maintain logistics infrastructure. Build resources for the night ahead. Every decision about where to go and how long to stay has consequences.</p>
+              </div>
+            </div>
+            <div class="phase-block night">
+              <div class="phase-header">
+                <div class="phase-dot"></div>
+                <div class="phase-title">Night Phase</div>
+                <div class="phase-duration">Judgment</div>
+              </div>
+              <div class="phase-body">
+                <p>Everything accomplished during the day determines whether you survive. Fight in EVA outside the station. Turrets assist and delay — they never replace the player. The station cannot defend itself.</p>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="section-title">Day Activities</h2>
+
+          <div class="day-activities">
+            <div class="day-act">
+              <div class="act-label">Salvage</div>
+              <div class="act-desc">Scan and recover resources from wreckage fields. Discover human cargo, station parts, rare materials, and story elements. Wrecks are the primary source of narrative discovery.</div>
+            </div>
+            <div class="day-act">
+              <div class="act-label">Mining</div>
+              <div class="act-desc">Locate and mine asteroids. Large asteroids often contain far more resources than can be carried — inventory and fuel limitations force difficult choices about what gets left behind.</div>
+            </div>
+            <div class="day-act">
+              <div class="act-label">Hunting</div>
+              <div class="act-desc">Hunt hostile wildlife for organic resources. Players gradually learn creature habitats and behaviors. Hunting becomes knowledge-driven rather than purely combat-driven — pattern recognition is the skill.</div>
+            </div>
+            <div class="day-act">
+              <div class="act-label">Logistics</div>
+              <div class="act-desc">Visit remote refineries placed throughout the asteroid field. Collect refined resources. Refuel, repair, and maintain infrastructure. Farther refineries generate greater rewards but cost more fuel and time.</div>
+            </div>
+          </div>
+
+          <h2 class="section-title">A Typical Day</h2>
+
+          <div class="day-split">
+            <div class="day-split-bar">
+              <div class="dsb-planned"></div>
+              <div class="dsb-opp"></div>
+              <div class="dsb-problem"></div>
+            </div>
+            <div class="day-split-legend">
+              <div class="dsl-item"><div class="dsl-dot" style="background:var(--accent)"></div> 70% Planned work — routes, refineries, known resources</div>
+              <div class="dsl-item"><div class="dsl-dot" style="background:#6b8c6b"></div> 20% Opportunity — rich asteroid, valuable wreck, rare creature</div>
+              <div class="dsl-item"><div class="dsl-dot" style="background:var(--accent-warm)"></div> 10% Problems — malfunction, attack, fuel issue, unexpected event</div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <div class="callout-label">Design Intent</div>
+            <p>The player's plan should be disrupted roughly once per day on average. Disruption is not punishment — it is the source of emergent stories. A day that goes exactly as planned is a day that produces nothing to remember.</p>
+          </div>
+
+          <h2 class="section-title">Survival Pressures</h2>
+
+          <p>All pressures remain active simultaneously. The goal is not to remove any of them — it is to interconnect them so that mistakes cascade into future problems rather than ending cleanly.</p>
+
+          <div class="pressure-row">
+            <span class="pressure-pill">⏳ Time until nightfall</span>
+            <span class="pressure-pill">🍖 Hunger</span>
+            <span class="pressure-pill">💧 Thirst</span>
+            <span class="pressure-pill">⛽ Fuel</span>
+            <span class="pressure-pill">🧠 Mental Health</span>
+            <span class="pressure-pill">📦 Inventory Capacity</span>
+          </div>
+
+          <h2 class="section-title">Loss Condition</h2>
+
+          <div class="loss-block">
+            <div class="loss-label">Terminal Conditions</div>
+            <div class="loss-items">
+              <div class="loss-item">Station destroyed → immediate game over</div>
+              <div class="loss-item">No escape pod</div>
+              <div class="loss-item">No second chance</div>
+            </div>
+          </div>
+
+          <h2 class="section-title">Refineries</h2>
+
+          <p>Remote refineries create the game's core logistics gameplay. They are owned infrastructure — placed by the player, maintained by the player, and increasingly vulnerable the further they are from the station.</p>
+
+          <div class="tradeoff-row">
+            <div class="tradeoff-cell upside">
+              <div class="tradeoff-label">Greater Distance</div>
+              <ul class="tradeoff-list">
+                <li>Greater resource rewards</li>
+                <li>Richer asteroid fields</li>
+                <li>Less competition from nearby threats</li>
+              </ul>
+            </div>
+            <div class="tradeoff-cell downside">
+              <div class="tradeoff-label">Greater Cost</div>
+              <ul class="tradeoff-list">
+                <li>Higher fuel consumption</li>
+                <li>More maintenance burden</li>
+                <li>Wildlife attack risk on routes</li>
+                <li>Less time for other activities</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2 class="section-title">Wildlife</h2>
+
+          <p>Four species only. Each represents a unique ecological problem rather than a simple combat enemy. Player knowledge of behaviors and habitats is the primary progression mechanic — not stats.</p>
+
+          <div class="wildlife-grid">
+            <div class="wildlife-card">
+              <div class="wc-icon">🪺</div>
+              <div class="wc-name">Nest Creatures</div>
+              <div class="wc-desc">Territorial. Predictable within their claimed zones. Learnable and avoidable once mapped.</div>
+            </div>
+            <div class="wildlife-card">
+              <div class="wc-icon">🌿</div>
+              <div class="wc-name">Resource Grazers</div>
+              <div class="wc-desc">Feed on the same asteroid deposits the player needs. Competition, not aggression.</div>
+            </div>
+            <div class="wildlife-card">
+              <div class="wc-icon">🦠</div>
+              <div class="wc-name">Swarm Parasites</div>
+              <div class="wc-desc">Attach to structures and degrade them over time. A maintenance threat, not a combat one.</div>
+            </div>
+            <div class="wildlife-card">
+              <div class="wc-icon">👁</div>
+              <div class="wc-name">Stalker Predator</div>
+              <div class="wc-desc">To be designed. The unknown threat — present in environmental clues before it is ever seen.</div>
+            </div>
+          </div>
+
+          <div class="callout">
+            <div class="callout-label">Ecological Design</div>
+            <p>Wildlife should feel like part of an ecosystem, not monsters spawned beside loot. They occupy identifiable habitats, leave environmental clues, and create learnable behavior patterns. The player who knows the creatures survives longer than the player who fights them.</p>
+          </div>
+
+          <h2 class="section-title">Resource Economy</h2>
+
+          <p>Resources are renewable but increasingly difficult to acquire efficiently. The challenge is not depletion — it is keeping up with escalating nightly threats. Too much valuable material exists in the field. Not enough time, fuel, or inventory to retrieve it all. Players will frequently leave resources behind, and those decisions accumulate.</p>
+
+          <h2 class="section-title">Design Pillars</h2>
+
+          <div class="pillar-list">
+            <div class="pillar-item"><span class="pillar-num">01</span><span class="pillar-text">Preparation over reaction</span></div>
+            <div class="pillar-item"><span class="pillar-num">02</span><span class="pillar-text">Logistics over grinding</span></div>
+            <div class="pillar-item"><span class="pillar-num">03</span><span class="pillar-text">Knowledge over leveling</span></div>
+            <div class="pillar-item"><span class="pillar-num">04</span><span class="pillar-text">Greed creates stories</span></div>
+            <div class="pillar-item"><span class="pillar-num">05</span><span class="pillar-text">Inventory limits create meaningful choices</span></div>
+            <div class="pillar-item"><span class="pillar-num">06</span><span class="pillar-text">Night is the ultimate test of daytime decisions</span></div>
+            <div class="pillar-item"><span class="pillar-num">07</span><span class="pillar-text">Player skill and planning matter more than stats</span></div>
+            <div class="pillar-item"><span class="pillar-num">08</span><span class="pillar-text">Every run ends eventually — survival duration is the score</span></div>
+          </div>
+
+          <div class="emo-loop">
+            <div class="emo-label">The Emotional Loop</div>
+            <div class="emo-steps">
+              <span class="emo-step">Explore</span>
+              <span class="emo-arr">→</span>
+              <span class="emo-step">Discover</span>
+              <span class="emo-arr">→</span>
+              <span class="emo-step">Get Greedy</span>
+              <span class="emo-arr">→</span>
+              <span class="emo-step">Push Your Luck</span>
+              <span class="emo-arr">→</span>
+              <span class="emo-step">Barely Make It Home</span>
+              <span class="emo-arr">→</span>
+              <span class="emo-step">Survive the Night</span>
+              <span class="emo-arr">→</span>
+              <span class="emo-step end">Repeat Until You Don't</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="page-footer">
+          <span>StratoWard Wiki · Gameplay</span>
+          <span>Last edited: 2026</span>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ── PAGE SWITCHING ───────────────────────────────────────
+    const items = document.querySelectorAll('.sidebar-item[data-page]');
+    const pages = document.querySelectorAll('.page');
+
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        const target = item.dataset.page;
+
+        // update sidebar active state
+        items.forEach(i => i.classList.remove('active'));
+        // mark all items pointing to same page active
+        document.querySelectorAll(`.sidebar-item[data-page="${target}"]`).forEach(i => i.classList.add('active'));
+
+        // show correct page
+        pages.forEach(p => p.classList.remove('active'));
+        const targetPage = document.getElementById('page-' + target);
+        if (targetPage) {
+          targetPage.classList.add('active');
+          window.scrollTo(0, 0);
+        }
+      });
+    });
+
+    // ── EVENT ACCORDION ──────────────────────────────────────
+    function toggleEvent(id) {
+      const card = document.getElementById(id);
+      card.classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

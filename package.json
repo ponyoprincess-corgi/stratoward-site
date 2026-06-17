@@ -1,0 +1,8 @@
+{
+  "name": "stratoward-site",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "preview": "npx --yes serve ."
+  }
+}
