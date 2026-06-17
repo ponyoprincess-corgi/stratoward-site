@@ -155,11 +155,11 @@
 
     /* ── PAGE PANEL ─────────────────────────────────────────── */
     .page {
-      display: none;
+      display: block;
       padding: 52px 60px 80px;
       max-width: 860px;
+      scroll-margin-top: 72px;
     }
-    .page.active { display: block; }
 
     /* ── BREADCRUMB ─────────────────────────────────────────── */
     .breadcrumb {
@@ -2660,9 +2660,9 @@
 
         <div class="portal-shell">
           <div class="portal-bar">
-            <p class="portal-note">This embeds the same balance dashboard used by the project. Open it from the Debug Panel and the bridge URL is carried through so Refresh From Project still reaches the latest game data.</p>
+            <p class="portal-note">This embeds the same balance dashboard used by the project directly in the live site. The debug panel is only a shortcut that can open this page with the bridge attached.</p>
             <div class="portal-actions">
-              <a class="portal-link" id="dashboardOpenLink" href="tools/loot-review/index.html" target="_blank" rel="noopener">Open Full Dashboard</a>
+              <a class="portal-link" id="dashboardOpenLink" href="tools/loot-review/index.html" target="_blank" rel="noopener">Open Standalone Dashboard</a>
             </div>
           </div>
           <iframe class="portal-frame" id="dashboardFrame" title="StratoWard Gameplay Dashboard"></iframe>
@@ -2884,7 +2884,10 @@
         updateUrl(targetPage);
       }
       if (!options.preserveScroll) {
-        window.scrollTo(0, 0);
+        const targetElement = getPageElement(targetPage);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: options.behavior || 'auto', block: 'start' });
+        }
       }
     }
 
@@ -2921,11 +2924,11 @@
     });
 
     window.addEventListener('popstate', () => {
-      activatePage(resolveInitialPage(), { updateUrl: false, preserveScroll: true });
+      activatePage(resolveInitialPage(), { updateUrl: false, preserveScroll: false });
     });
 
     initWikiEditors();
-    activatePage(resolveInitialPage(), { updateUrl: false, preserveScroll: true });
+    activatePage(resolveInitialPage(), { updateUrl: false, preserveScroll: false });
     syncDashboardFrame();
 
     function toggleEvent(id) {
