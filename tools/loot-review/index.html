@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StratoWard Loot Review</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">STRATOWARD REVIEW TOOL</p>
+      <h1>Loot, Recipes, Minerals, and AI Drops</h1>
+      <p id="connectionText" class="muted">Loading project snapshot...</p>
+    </div>
+    <div class="actions">
+      <button id="refreshButton" class="primary" title="Reload the latest item, recipe, mineral, and AI drop data from the open StratoWard editor.">Refresh From Project</button>
+      <button id="saveButton" title="Save only review notes, status, priority, and proposed-change metadata. This does not edit gameplay DataTables.">Save Review Metadata</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary-grid" id="summaryGrid"></section>
+
+    <section class="toolbar">
+      <input id="searchInput" type="search" placeholder="Search item ids, recipes, minerals, AI, notes" title="Search across visible dashboard data plus your review notes and proposed changes.">
+      <select id="statusFilter" title="Filter by your review status metadata.">
+        <option value="all">All statuses</option>
+        <option value="unreviewed">Unreviewed</option>
+        <option value="good">Good</option>
+        <option value="needs_changing">Needs changing</option>
+      </select>
+      <select id="priorityFilter" title="Filter by your review priority metadata.">
+        <option value="all">All priorities</option>
+        <option value="none">No priority</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <select id="sinkFilter" title="Item Balancing only: show items by the terminal place they end up, such as ship upgrades or crafted modules.">
+        <option value="all">All sinks</option>
+        <option value="ship upgrade">Ship upgrade</option>
+        <option value="terminal consumable">Terminal consumable</option>
+        <option value="terminal module">Terminal module</option>
+        <option value="terminal weapon">Terminal weapon</option>
+        <option value="not terminal">Not terminal</option>
+      </select>
+      <select id="issueFilter" title="Item Balancing only: show items with specific balance warning flags.">
+        <option value="all">All issue flags</option>
+        <option value="with_issues">With issues</option>
+        <option value="missing_sources">Missing sources</option>
+        <option value="no_sinks">No sinks</option>
+        <option value="recipe_only_output">Recipe-only output</option>
+        <option value="dropped_but_unused">Dropped but unused</option>
+        <option value="ship_upgrade_demand">Ship upgrade demand</option>
+        <option value="missing_pickup_mapping">Missing pickup mapping</option>
+      </select>
+    </section>
+
+    <nav class="tabs" id="tabs"></nav>
+
+    <section id="content" class="content"></section>
+  </main>
+
+  <template id="reviewControlsTemplate">
+    <div class="review-controls">
+      <div class="status-row">
+        <button data-status="good" class="status good" title="Mark this row as reviewed and acceptable.">Good</button>
+        <button data-status="needs_changing" class="status needs" title="Mark this row as needing a balance/content change.">Needs changing</button>
+        <select class="priority" title="Set how urgent this review item is.">
+          <option value="">No priority</option>
+          <option value="low">Low priority</option>
+          <option value="medium">Medium priority</option>
+          <option value="high">High priority</option>
+        </select>
+      </div>
+      <textarea class="notes" rows="2" placeholder="Review notes" title="Designer notes for this row. Saved as review metadata only."></textarea>
+      <textarea class="proposed" rows="2" placeholder="Proposed gameplay change, metadata only" title="A proposed content/balance change. Saved as metadata only; it does not edit gameplay assets."></textarea>
+    </div>
+  </template>
+
+  <script src="latest_project_snapshot.js"></script>
+  <script src="review_metadata_snapshot.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

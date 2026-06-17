@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StratoWard Wiki</title>
+  <title>StratoWard Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
   <style>
@@ -1216,6 +1216,108 @@
     .emo-arr  { color: var(--muted); font-size: 12px; }
     .emo-step.end { color: var(--accent-warm); font-weight: 500; font-style: normal; font-family: var(--font-display); font-size: 13px; letter-spacing: 0.04em; }
 
+    .wiki-editor-shell {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 18px 0 14px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      background: rgba(17, 20, 26, 0.86);
+    }
+    .wiki-editor-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .wiki-editor-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .wiki-editor-status {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .wiki-editor-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .wiki-editor-button,
+    .portal-link {
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--font-display);
+      font-size: 12px;
+      padding: 9px 12px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+    .wiki-editor-button:hover,
+    .portal-link:hover {
+      border-color: var(--accent);
+      background: rgba(91, 143, 168, 0.12);
+      color: var(--text);
+    }
+    .wiki-editor-button:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+    .wiki-editable.is-editing {
+      outline: 1px solid var(--accent);
+      outline-offset: 10px;
+      background: rgba(255, 255, 255, 0.015);
+    }
+    .wiki-editable.is-editing *::selection {
+      background: rgba(91, 143, 168, 0.35);
+    }
+    .portal-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .portal-bar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      background: rgba(15, 18, 24, 0.94);
+    }
+    .portal-note {
+      margin: 0;
+      max-width: 76ch;
+      color: var(--text-dim);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .portal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .portal-frame {
+      width: 100%;
+      min-height: 980px;
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+
     @media (max-width: 720px) {
       body { overflow-x: hidden; }
       .topbar { padding: 0 16px; gap: 12px; }
@@ -1285,7 +1387,7 @@
       StratoWard
     </div>
     <div class="topbar-divider"></div>
-    <div class="topbar-tag">Community Lore Archive · v0.1</div>
+    <div class="topbar-tag">Editable Wiki · Live Gameplay Portal · v0.2</div>
   </header>
 
   <div class="layout">
@@ -1380,6 +1482,13 @@
         </div>
         <div class="sidebar-item" data-page="themes">
           <span class="item-icon">◯</span> Themes
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Live Portal</div>
+        <div class="sidebar-item" data-page="dashboard">
+          <span class="item-icon">◉</span> Gameplay Dashboard
         </div>
       </div>
 
@@ -1796,12 +1905,25 @@
           </div>
         </div>
 
+        <div class="wiki-editor-shell" data-wiki-toolbar="lore">
+          <div class="wiki-editor-meta">
+            <div class="wiki-editor-title">Editable Wiki</div>
+            <div class="wiki-editor-status" data-wiki-status="lore">Read only. Click Edit to modify this page in your browser.</div>
+          </div>
+          <div class="wiki-editor-actions">
+            <button class="wiki-editor-button" type="button" data-wiki-action="edit" data-wiki-page="lore">Edit</button>
+            <button class="wiki-editor-button" type="button" data-wiki-action="save" data-wiki-page="lore" disabled>Save</button>
+            <button class="wiki-editor-button" type="button" data-wiki-action="cancel" data-wiki-page="lore" disabled>Cancel</button>
+            <button class="wiki-editor-button" type="button" data-wiki-action="reset" data-wiki-page="lore">Reset</button>
+          </div>
+        </div>
+
         <div class="warning-block">
           <div class="warning-icon">⚠</div>
           <p>Do not turn Aurel into a tour guide or the Xerix into a single explaining villain. Aurel should be corrupted, fragmented, three hundred years gone, and sometimes wrong. Alice carries the practical voice; Aurel carries the grief.</p>
         </div>
 
-        <div class="content">
+        <div class="content wiki-editable" data-wiki-page="lore">
 
           <h2 class="section-title">What the Player Is Actually Doing</h2>
 
@@ -2198,7 +2320,20 @@
           </div>
         </div>
 
-        <div class="content">
+        <div class="wiki-editor-shell" data-wiki-toolbar="gameplay">
+          <div class="wiki-editor-meta">
+            <div class="wiki-editor-title">Editable Wiki</div>
+            <div class="wiki-editor-status" data-wiki-status="gameplay">Read only. Click Edit to modify this page in your browser.</div>
+          </div>
+          <div class="wiki-editor-actions">
+            <button class="wiki-editor-button" type="button" data-wiki-action="edit" data-wiki-page="gameplay">Edit</button>
+            <button class="wiki-editor-button" type="button" data-wiki-action="save" data-wiki-page="gameplay" disabled>Save</button>
+            <button class="wiki-editor-button" type="button" data-wiki-action="cancel" data-wiki-page="gameplay" disabled>Cancel</button>
+            <button class="wiki-editor-button" type="button" data-wiki-action="reset" data-wiki-page="gameplay">Reset</button>
+          </div>
+        </div>
+
+        <div class="content wiki-editable" data-wiki-page="gameplay">
 
           <h2 class="section-title">Core Fantasy</h2>
 
@@ -2511,34 +2646,288 @@
         </div>
       </div>
 
+      <!-- ── PAGE: GAMEPLAY DASHBOARD ───────────────────────────────────── -->
+      <div class="page" id="page-dashboard">
+        <div class="breadcrumb">StratoWard <span>/</span> Live Portal <span>/</span> Gameplay Dashboard</div>
+        <div class="page-header">
+          <div class="page-eyebrow">Live Portal</div>
+          <h1 class="page-title">Gameplay Dashboard</h1>
+          <div class="page-meta">
+            <div>◈ Item balancing, recipes, mineral rocks, and AI drops</div>
+            <div>◌ Refresh and save through the editor bridge</div>
+          </div>
+        </div>
+
+        <div class="portal-shell">
+          <div class="portal-bar">
+            <p class="portal-note">This embeds the same balance dashboard used by the project. Open it from the Debug Panel and the bridge URL is carried through so Refresh From Project still reaches the latest game data.</p>
+            <div class="portal-actions">
+              <a class="portal-link" id="dashboardOpenLink" href="tools/loot-review/index.html" target="_blank" rel="noopener">Open Full Dashboard</a>
+            </div>
+          </div>
+          <iframe class="portal-frame" id="dashboardFrame" title="StratoWard Gameplay Dashboard"></iframe>
+        </div>
+
+        <div class="page-footer">
+          <span>StratoWard Portal · Gameplay Dashboard</span>
+          <span>Bridge-aware same-origin dashboard</span>
+        </div>
+      </div>
+
     </main>
   </div>
 
-  <script>
-    // ── PAGE SWITCHING ───────────────────────────────────────
-    const items = document.querySelectorAll('.sidebar-item[data-page]');
-    const pages = document.querySelectorAll('.page');
+    <script>
+    const editablePages = ['gameplay', 'lore'];
+    const wikiStoragePrefix = 'stratoward.site.wiki.';
+    const sidebarItems = Array.from(document.querySelectorAll('.sidebar-item[data-page]'));
+    const pages = Array.from(document.querySelectorAll('.page'));
+    const pageState = new Map();
 
-    items.forEach(item => {
-      item.addEventListener('click', () => {
+    function getQueryParam(name) {
+      return new URL(window.location.href).searchParams.get(name) || '';
+    }
+
+    function getBridgeUrl() {
+      const params = new URL(window.location.href).searchParams;
+      return (params.get('bridge') || '').trim();
+    }
+
+    const bridgeUrl = getBridgeUrl();
+
+    function storageKey(page) {
+      return `${wikiStoragePrefix}${page}`;
+    }
+
+    function getPageElement(page) {
+      return document.getElementById(`page-${page}`);
+    }
+
+    function getEditableContent(page) {
+      return document.querySelector(`#page-${page} .wiki-editable`);
+    }
+
+    function getEditorState(page) {
+      return pageState.get(page) || null;
+    }
+
+    function setEditorStatus(page, text) {
+      const state = getEditorState(page);
+      if (!state || !state.status) return;
+      state.status.textContent = text;
+    }
+
+    function syncEditorButtons(page) {
+      const state = getEditorState(page);
+      if (!state) return;
+      state.saveButton.disabled = !state.editing || !state.dirty;
+      state.cancelButton.disabled = !state.editing;
+      state.editButton.disabled = state.editing;
+    }
+
+    function persistPage(page) {
+      const state = getEditorState(page);
+      if (!state || !state.content) return;
+      state.savedHtml = state.content.innerHTML;
+      window.localStorage.setItem(storageKey(page), state.savedHtml);
+      state.editing = false;
+      state.dirty = false;
+      state.content.classList.remove('is-editing');
+      state.content.removeAttribute('contenteditable');
+      setEditorStatus(page, 'Saved in this browser. Refresh keeps the draft.');
+      syncEditorButtons(page);
+    }
+
+    function beginEdit(page) {
+      const state = getEditorState(page);
+      if (!state || !state.content) return;
+      state.editing = true;
+      state.dirty = false;
+      state.content.setAttribute('contenteditable', 'true');
+      state.content.classList.add('is-editing');
+      state.content.focus({ preventScroll: true });
+      setEditorStatus(page, 'Editing in browser. Save writes to localStorage.');
+      syncEditorButtons(page);
+    }
+
+    function cancelEdit(page) {
+      const state = getEditorState(page);
+      if (!state || !state.content) return;
+      state.content.innerHTML = state.savedHtml;
+      state.editing = false;
+      state.dirty = false;
+      state.content.classList.remove('is-editing');
+      state.content.removeAttribute('contenteditable');
+      setEditorStatus(page, 'Draft reverted to the last saved browser copy.');
+      syncEditorButtons(page);
+    }
+
+    function resetPage(page) {
+      const state = getEditorState(page);
+      if (!state || !state.content) return;
+      if (!window.confirm('Reset this page to the original site copy?')) {
+        return;
+      }
+      state.content.innerHTML = state.defaultHtml;
+      state.savedHtml = state.defaultHtml;
+      state.editing = false;
+      state.dirty = false;
+      state.content.classList.remove('is-editing');
+      state.content.removeAttribute('contenteditable');
+      window.localStorage.removeItem(storageKey(page));
+      setEditorStatus(page, 'Reset to the original site copy for this browser.');
+      syncEditorButtons(page);
+    }
+
+    function initWikiEditors() {
+      editablePages.forEach((page) => {
+        const content = getEditableContent(page);
+        const toolbar = document.querySelector(`[data-wiki-toolbar="${page}"]`);
+        if (!content || !toolbar) {
+          return;
+        }
+
+        const defaultHtml = content.innerHTML;
+        const savedHtml = window.localStorage.getItem(storageKey(page)) || defaultHtml;
+        content.innerHTML = savedHtml;
+
+        const state = {
+          page,
+          content,
+          toolbar,
+          status: toolbar.querySelector(`[data-wiki-status="${page}"]`),
+          editButton: toolbar.querySelector(`[data-wiki-action="edit"][data-wiki-page="${page}"]`),
+          saveButton: toolbar.querySelector(`[data-wiki-action="save"][data-wiki-page="${page}"]`),
+          cancelButton: toolbar.querySelector(`[data-wiki-action="cancel"][data-wiki-page="${page}"]`),
+          resetButton: toolbar.querySelector(`[data-wiki-action="reset"][data-wiki-page="${page}"]`),
+          defaultHtml,
+          savedHtml,
+          editing: false,
+          dirty: false,
+        };
+
+        content.addEventListener('input', () => {
+          state.dirty = content.innerHTML !== state.savedHtml;
+          setEditorStatus(page, state.dirty ? 'Draft has unsaved changes.' : 'Editing in browser. Save writes to localStorage.');
+          syncEditorButtons(page);
+        });
+
+        content.addEventListener('paste', () => {
+          window.setTimeout(() => {
+            state.dirty = content.innerHTML !== state.savedHtml;
+            setEditorStatus(page, state.dirty ? 'Draft has unsaved changes.' : 'Editing in browser. Save writes to localStorage.');
+            syncEditorButtons(page);
+          }, 0);
+        });
+
+        pageState.set(page, state);
+        setEditorStatus(page, window.localStorage.getItem(storageKey(page)) ? 'Saved in this browser. Click Edit to revise.' : 'Read only. Click Edit to modify this page in your browser.');
+        syncEditorButtons(page);
+      });
+    }
+
+    function buildDashboardUrl() {
+      const dashboardUrl = new URL('tools/loot-review/index.html', window.location.href);
+      if (bridgeUrl) {
+        dashboardUrl.searchParams.set('bridge', bridgeUrl);
+      }
+      return dashboardUrl.toString();
+    }
+
+    function syncDashboardFrame() {
+      const frame = document.getElementById('dashboardFrame');
+      const openLink = document.getElementById('dashboardOpenLink');
+      const url = buildDashboardUrl();
+      if (frame) {
+        frame.src = url;
+      }
+      if (openLink) {
+        openLink.href = url;
+      }
+    }
+
+    function updateUrl(page) {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('page', page);
+      if (bridgeUrl) {
+        nextUrl.searchParams.set('bridge', bridgeUrl);
+      } else {
+        nextUrl.searchParams.delete('bridge');
+      }
+      window.history.replaceState({}, '', nextUrl.toString());
+    }
+
+    function resolveInitialPage() {
+      const requested = getQueryParam('page') || getQueryParam('view') || getQueryParam('section');
+      if (requested && getPageElement(requested)) {
+        return requested;
+      }
+      const activeItem = document.querySelector('.sidebar-item.active[data-page]');
+      if (activeItem && getPageElement(activeItem.dataset.page || '')) {
+        return activeItem.dataset.page;
+      }
+      return 'story';
+    }
+
+    function setActiveSidebar(page) {
+      sidebarItems.forEach((item) => item.classList.toggle('active', item.dataset.page === page));
+    }
+
+    function activatePage(page, options = {}) {
+      const targetPage = getPageElement(page) ? page : 'story';
+      pages.forEach((p) => p.classList.toggle('active', p.id === `page-${targetPage}`));
+      setActiveSidebar(targetPage);
+      if (targetPage === 'dashboard') {
+        syncDashboardFrame();
+      }
+      if (options.updateUrl !== false) {
+        updateUrl(targetPage);
+      }
+      if (!options.preserveScroll) {
+        window.scrollTo(0, 0);
+      }
+    }
+
+    sidebarItems.forEach((item) => {
+      item.addEventListener('click', (event) => {
+        event.preventDefault();
         const target = item.dataset.page;
-
-        // update sidebar active state
-        items.forEach(i => i.classList.remove('active'));
-        // mark all items pointing to same page active
-        document.querySelectorAll(`.sidebar-item[data-page="${target}"]`).forEach(i => i.classList.add('active'));
-
-        // show correct page
-        pages.forEach(p => p.classList.remove('active'));
-        const targetPage = document.getElementById('page-' + target);
-        if (targetPage) {
-          targetPage.classList.add('active');
-          window.scrollTo(0, 0);
+        if (target) {
+          activatePage(target);
         }
       });
     });
 
-    // ── EVENT ACCORDION ──────────────────────────────────────
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-wiki-action]');
+      if (!button) return;
+
+      const page = button.dataset.wikiPage;
+      if (!page) return;
+
+      const action = button.dataset.wikiAction;
+      if (action === 'edit') beginEdit(page);
+      if (action === 'save') persistPage(page);
+      if (action === 'cancel') cancelEdit(page);
+      if (action === 'reset') resetPage(page);
+    });
+
+    window.addEventListener('beforeunload', (event) => {
+      const hasDirtyDraft = Array.from(pageState.values()).some((state) => state.dirty);
+      if (hasDirtyDraft) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    });
+
+    window.addEventListener('popstate', () => {
+      activatePage(resolveInitialPage(), { updateUrl: false, preserveScroll: true });
+    });
+
+    initWikiEditors();
+    activatePage(resolveInitialPage(), { updateUrl: false, preserveScroll: true });
+    syncDashboardFrame();
+
     function toggleEvent(id) {
       const card = document.getElementById(id);
       card.classList.toggle('open');
