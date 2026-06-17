@@ -1216,6 +1216,60 @@
     .emo-arr  { color: var(--muted); font-size: 12px; }
     .emo-step.end { color: var(--accent-warm); font-weight: 500; font-style: normal; font-family: var(--font-display); font-size: 13px; letter-spacing: 0.04em; }
 
+    @media (max-width: 720px) {
+      body { overflow-x: hidden; }
+      .topbar { padding: 0 16px; gap: 12px; }
+      .topbar-logo { font-size: 15px; }
+      .topbar-tag { display: none; }
+      .layout { display: block; }
+      .sidebar {
+        position: relative;
+        top: auto;
+        bottom: auto;
+        width: 100%;
+        min-width: 0;
+        max-height: 260px;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+        padding: 18px 0 20px;
+      }
+      .sidebar-section { margin-bottom: 18px; }
+      .sidebar-section-label { padding: 0 16px 8px; }
+      .sidebar-item { padding: 8px 16px; }
+      .main { margin-left: 0; }
+      .page {
+        max-width: none;
+        width: 100%;
+        padding: 34px 20px 64px;
+      }
+      .breadcrumb { margin-bottom: 28px; }
+      .page-title { font-size: 36px; }
+      .page-meta { font-size: 10px; gap: 6px; }
+      .phase-blocks,
+      .tradeoff-row,
+      .wildlife-grid {
+        grid-template-columns: 1fr;
+      }
+      .day-act {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .act-label {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+        padding: 0 0 8px;
+      }
+      .event-hope-table {
+        display: block;
+        overflow-x: auto;
+        white-space: normal;
+      }
+      .event-hope-table th,
+      .event-hope-table td {
+        min-width: 132px;
+      }
+    }
+
     /* ── SCROLLBAR ──────────────────────────────────────────── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -2170,8 +2224,8 @@
           <div class="page-eyebrow">Design</div>
           <h1 class="page-title">Gameplay</h1>
           <div class="page-meta">
-            <div>◈ Core Survival Loop</div>
-            <div>◌ Day Phase · Night Phase · Systems</div>
+            <div>◈ Gameplay Loop · System Summary</div>
+            <div>◌ Episode 1 · Endless Survival · Owner Paths</div>
           </div>
         </div>
 
@@ -2179,63 +2233,71 @@
 
           <h2 class="section-title">Core Fantasy</h2>
 
-          <p>A lone survivor in deep space scavenges, mines, hunts, and expands a fragile station during the day while preparing for increasingly deadly nightly invasions. Survival is achieved through player knowledge, planning, logistics, and risk management — not grinding levels.</p>
+          <p>StratoWard is a survival space-action game where the player explores hazardous space, mines and scavenges resources, fights escalating alien threats, upgrades the ship, unlocks alien technology, and survives long enough to activate the Serian ship at the end of Episode 1.</p>
 
           <div class="gp-insp-row">
-            <span class="gp-insp">The Long Dark</span>
-            <span class="gp-insp">Don't Starve</span>
-            <span class="gp-insp">Subnautica</span>
-            <span class="gp-insp">Frostpunk</span>
-            <span class="gp-insp">Project Zomboid</span>
+            <span class="gp-insp">Current Implementation</span>
+            <span class="gp-insp">Intended Design</span>
+            <span class="gp-insp">Episode 1</span>
+            <span class="gp-insp">Endless Survival</span>
+            <span class="gp-insp">System Owners</span>
           </div>
 
-          <h2 class="section-title">The Main Loop</h2>
+          <h2 class="section-title">The Complete Loop</h2>
 
           <div class="phase-blocks">
             <div class="phase-block day">
               <div class="phase-header">
                 <div class="phase-dot"></div>
-                <div class="phase-title">Day Phase</div>
-                <div class="phase-duration">~30 min</div>
+                <div class="phase-title">Field Run</div>
+                <div class="phase-duration">Risk</div>
               </div>
               <div class="phase-body">
-                <p>Leave station. Salvage, mine, hunt, and maintain logistics infrastructure. Build resources for the night ahead. Every decision about where to go and how long to stay has consequences.</p>
+                <p>Launch from the ship or station, explore asteroid fields and hostile zones, scan for opportunity, mine or scavenge resources, fight when the reward is worth the damage, and decide when to retreat.</p>
               </div>
             </div>
             <div class="phase-block night">
               <div class="phase-header">
                 <div class="phase-dot"></div>
-                <div class="phase-title">Night Phase</div>
-                <div class="phase-duration">Judgment</div>
+                <div class="phase-title">Ship Phase</div>
+                <div class="phase-duration">Conversion</div>
               </div>
               <div class="phase-body">
-                <p>Everything accomplished during the day determines whether you survive. Fight in EVA outside the station. Turrets assist and delay — they never replace the player. The station cannot defend itself.</p>
+                <p>Return before pressure overtakes the player. Bank loot, craft, repair, refuel, upgrade the ship, unlock alien technology, save progress, and advance into a more dangerous day.</p>
               </div>
             </div>
           </div>
 
-          <h2 class="section-title">Day Activities</h2>
+          <h2 class="section-title">Core Loop Steps</h2>
 
           <div class="day-activities">
             <div class="day-act">
-              <div class="act-label">Salvage</div>
-              <div class="act-desc">Scan and recover resources from wreckage fields. Discover human cargo, station parts, rare materials, and story elements. Wrecks are the primary source of narrative discovery.</div>
+              <div class="act-label">Launch</div>
+              <div class="act-desc">Leave the ship or station and commit to a field route with limited oxygen, fuel, food, ammo, cargo space, and ship safety margin.</div>
             </div>
             <div class="day-act">
-              <div class="act-label">Mining</div>
-              <div class="act-desc">Locate and mine asteroids. Large asteroids often contain far more resources than can be carried — inventory and fuel limitations force difficult choices about what gets left behind.</div>
+              <div class="act-label">Explore</div>
+              <div class="act-desc">Search asteroid fields, wrecks, hostile zones, and mission-critical locations for ore, loot, signals, alien samples, and story progress.</div>
             </div>
             <div class="day-act">
-              <div class="act-label">Hunting</div>
-              <div class="act-desc">Hunt hostile wildlife for organic resources. Players gradually learn creature habitats and behaviors. Hunting becomes knowledge-driven rather than purely combat-driven — pattern recognition is the skill.</div>
+              <div class="act-label">Gather</div>
+              <div class="act-desc">Scan, mine, scavenge, or fight to convert field opportunities into resources, alien materials, unlock clues, and immediate survival risk.</div>
             </div>
             <div class="day-act">
-              <div class="act-label">Logistics</div>
-              <div class="act-desc">Visit remote refineries placed throughout the asteroid field. Collect refined resources. Refuel, repair, and maintain infrastructure. Farther refineries generate greater rewards but cost more fuel and time.</div>
+              <div class="act-label">Retreat</div>
+              <div class="act-desc">Return to the ship or hub before cascading pressure turns a profitable run into a failed day.</div>
+            </div>
+            <div class="day-act">
+              <div class="act-label">Upgrade</div>
+              <div class="act-desc">Craft, repair, refuel, improve ship systems, and research alien technology that changes what the next run can survive.</div>
+            </div>
+            <div class="day-act">
+              <div class="act-label">Escalate</div>
+              <div class="act-desc">Advance the day. Threats, hazards, upkeep, and route risk increase while better materials and deeper objectives become reachable.</div>
             </div>
           </div>
 
-          <h2 class="section-title">A Typical Day</h2>
+          <h2 class="section-title">Progression Spine</h2>
 
           <div class="day-split">
             <div class="day-split-bar">
@@ -2244,131 +2306,232 @@
               <div class="dsb-problem"></div>
             </div>
             <div class="day-split-legend">
-              <div class="dsl-item"><div class="dsl-dot" style="background:var(--accent)"></div> 70% Planned work — routes, refineries, known resources</div>
-              <div class="dsl-item"><div class="dsl-dot" style="background:#6b8c6b"></div> 20% Opportunity — rich asteroid, valuable wreck, rare creature</div>
-              <div class="dsl-item"><div class="dsl-dot" style="background:var(--accent-warm)"></div> 10% Problems — malfunction, attack, fuel issue, unexpected event</div>
+              <div class="dsl-item"><div class="dsl-dot" style="background:var(--accent)"></div> Survive the day, gather resources, and return with enough margin to improve the ship.</div>
+              <div class="dsl-item"><div class="dsl-dot" style="background:#6b8c6b"></div> Unlock alien technology through drops, samples, boss kills, exploration, crafting, and story events.</div>
+              <div class="dsl-item"><div class="dsl-dot" style="background:var(--accent-warm)"></div> Push deeper until the Serian ship can be activated, then continue into escalating survival.</div>
             </div>
           </div>
 
           <div class="callout">
-            <div class="callout-label">Design Intent</div>
-            <p>The player's plan should be disrupted roughly once per day on average. Disruption is not punishment — it is the source of emergent stories. A day that goes exactly as planned is a day that produces nothing to remember.</p>
+            <div class="callout-label">Mode Structure</div>
+            <p>Episode 1 ends when the player turns on the Serian ship, with a target length of about seven hours. After that, endless survival continues, but it should not be truly endless: strong players should reach roughly day 25-30, and survival beyond that should feel nearly impossible.</p>
           </div>
 
           <h2 class="section-title">Survival Pressures</h2>
 
-          <p>All pressures remain active simultaneously. The goal is not to remove any of them — it is to interconnect them so that mistakes cascade into future problems rather than ending cleanly.</p>
+          <p>Survival is a stack of simultaneous pressures. The player should constantly trade one risk against another: burn fuel to escape, spend oxygen to mine longer, take ship damage to finish an objective, or fight for alien tech that may make tomorrow survivable.</p>
 
           <div class="pressure-row">
-            <span class="pressure-pill">⏳ Time until nightfall</span>
-            <span class="pressure-pill">🍖 Hunger</span>
-            <span class="pressure-pill">💧 Thirst</span>
-            <span class="pressure-pill">⛽ Fuel</span>
-            <span class="pressure-pill">🧠 Mental Health</span>
-            <span class="pressure-pill">📦 Inventory Capacity</span>
+            <span class="pressure-pill">Oxygen</span>
+            <span class="pressure-pill">Fuel</span>
+            <span class="pressure-pill">Food</span>
+            <span class="pressure-pill">Enemy Escalation</span>
+            <span class="pressure-pill">Environmental Hazards</span>
+            <span class="pressure-pill">Ship Damage</span>
+            <span class="pressure-pill">Day Timer</span>
+            <span class="pressure-pill">Ammo</span>
+            <span class="pressure-pill">Cargo Capacity</span>
           </div>
 
-          <h2 class="section-title">Loss Condition</h2>
+          <h2 class="section-title">End States</h2>
 
           <div class="loss-block">
-            <div class="loss-label">Terminal Conditions</div>
+            <div class="loss-label">Story and Survival</div>
             <div class="loss-items">
-              <div class="loss-item">Station destroyed → immediate game over</div>
-              <div class="loss-item">No escape pod</div>
-              <div class="loss-item">No second chance</div>
+              <div class="loss-item">Episode 1 completion: activate the Serian ship.</div>
+              <div class="loss-item">Campaign failure pressure: death, ship destruction, or inability to recover from survival collapse.</div>
+              <div class="loss-item">Endless mode target: day 25-30 is the practical ceiling for strong play.</div>
             </div>
           </div>
 
-          <h2 class="section-title">Refineries</h2>
+          <h2 class="section-title">Ship Upgrades</h2>
 
-          <p>Remote refineries create the game's core logistics gameplay. They are owned infrastructure — placed by the player, maintained by the player, and increasingly vulnerable the further they are from the station.</p>
+          <p>The ship is the main long-term progression object. Upgrades should convert mined resources, salvaged parts, crafted components, and alien technology into more survivable routes and deeper reach.</p>
 
           <div class="tradeoff-row">
             <div class="tradeoff-cell upside">
-              <div class="tradeoff-label">Greater Distance</div>
+              <div class="tradeoff-label">Survival Systems</div>
               <ul class="tradeoff-list">
-                <li>Greater resource rewards</li>
-                <li>Richer asteroid fields</li>
-                <li>Less competition from nearby threats</li>
+                <li>Hull</li>
+                <li>Life support</li>
+                <li>Shields</li>
+                <li>Cargo</li>
               </ul>
             </div>
             <div class="tradeoff-cell downside">
-              <div class="tradeoff-label">Greater Cost</div>
+              <div class="tradeoff-label">Reach and Power</div>
               <ul class="tradeoff-list">
-                <li>Higher fuel consumption</li>
-                <li>More maintenance burden</li>
-                <li>Wildlife attack risk on routes</li>
-                <li>Less time for other activities</li>
+                <li>Engines</li>
+                <li>Weapons</li>
+                <li>Scanner</li>
+                <li>Crafting</li>
+                <li>AI/automation</li>
               </ul>
             </div>
           </div>
 
-          <h2 class="section-title">Wildlife</h2>
+          <h2 class="section-title">Alien Technology</h2>
 
-          <p>Four species only. Each represents a unique ecological problem rather than a simple combat enemy. Player knowledge of behaviors and habitats is the primary progression mechanic — not stats.</p>
+          <p>Alien tech is the high-risk unlock layer. It should come from every major activity so combat, research, exploration, crafting, and story progress all feed the same survival spine.</p>
 
           <div class="wildlife-grid">
             <div class="wildlife-card">
-              <div class="wc-icon">🪺</div>
-              <div class="wc-name">Nest Creatures</div>
-              <div class="wc-desc">Territorial. Predictable within their claimed zones. Learnable and avoidable once mapped.</div>
+              <div class="wc-icon">◆</div>
+              <div class="wc-name">Alien Drops</div>
+              <div class="wc-desc">Combat rewards that turn threat exposure into rare materials and prototype components.</div>
             </div>
             <div class="wildlife-card">
-              <div class="wc-icon">🌿</div>
-              <div class="wc-name">Resource Grazers</div>
-              <div class="wc-desc">Feed on the same asteroid deposits the player needs. Competition, not aggression.</div>
+              <div class="wc-icon">◇</div>
+              <div class="wc-name">Research Samples</div>
+              <div class="wc-desc">Biological or memory-bearing fragments that move through ship research and unlock new recipes.</div>
             </div>
             <div class="wildlife-card">
-              <div class="wc-icon">🦠</div>
-              <div class="wc-name">Swarm Parasites</div>
-              <div class="wc-desc">Attach to structures and degrade them over time. A maintenance threat, not a combat one.</div>
+              <div class="wc-icon">△</div>
+              <div class="wc-name">Elite Kills</div>
+              <div class="wc-desc">Boss or elite encounters that produce the highest-risk, highest-impact tech rewards.</div>
             </div>
             <div class="wildlife-card">
-              <div class="wc-icon">👁</div>
-              <div class="wc-name">Stalker Predator</div>
-              <div class="wc-desc">To be designed. The unknown threat — present in environmental clues before it is ever seen.</div>
+              <div class="wc-icon">◎</div>
+              <div class="wc-name">Exploration Finds</div>
+              <div class="wc-desc">Hidden caches, wrecks, and Serian/Xerix sites that reward route risk and scanner investment.</div>
+            </div>
+            <div class="wildlife-card">
+              <div class="wc-icon">◌</div>
+              <div class="wc-name">Crafting Milestones</div>
+              <div class="wc-desc">Upgrade thresholds that convert collected parts into new ship capabilities.</div>
+            </div>
+            <div class="wildlife-card">
+              <div class="wc-icon">◈</div>
+              <div class="wc-name">Story Events</div>
+              <div class="wc-desc">Episode 1 beats that unlock technology needed to reach and activate the Serian ship.</div>
             </div>
           </div>
 
           <div class="callout">
-            <div class="callout-label">Ecological Design</div>
-            <p>Wildlife should feel like part of an ecosystem, not monsters spawned beside loot. They occupy identifiable habitats, leave environmental clues, and create learnable behavior patterns. The player who knows the creatures survives longer than the player who fights them.</p>
+            <div class="callout-label">Progression Rule</div>
+            <p>Alien technology should change survival strategy, not just raise numbers. A good unlock creates a new route, a new risk decision, or a new way to survive one more day.</p>
           </div>
 
           <h2 class="section-title">Resource Economy</h2>
 
-          <p>Resources are renewable but increasingly difficult to acquire efficiently. The challenge is not depletion — it is keeping up with escalating nightly threats. Too much valuable material exists in the field. Not enough time, fuel, or inventory to retrieve it all. Players will frequently leave resources behind, and those decisions accumulate.</p>
+          <p>Resources should remain available but increasingly expensive to acquire safely. The pressure is not only scarcity; it is time, fuel, oxygen, damage, cargo space, enemy escalation, and the decision to leave valuable material behind so the player can survive the return trip.</p>
 
           <h2 class="section-title">Design Pillars</h2>
 
           <div class="pillar-list">
-            <div class="pillar-item"><span class="pillar-num">01</span><span class="pillar-text">Preparation over reaction</span></div>
-            <div class="pillar-item"><span class="pillar-num">02</span><span class="pillar-text">Logistics over grinding</span></div>
-            <div class="pillar-item"><span class="pillar-num">03</span><span class="pillar-text">Knowledge over leveling</span></div>
-            <div class="pillar-item"><span class="pillar-num">04</span><span class="pillar-text">Greed creates stories</span></div>
-            <div class="pillar-item"><span class="pillar-num">05</span><span class="pillar-text">Inventory limits create meaningful choices</span></div>
-            <div class="pillar-item"><span class="pillar-num">06</span><span class="pillar-text">Night is the ultimate test of daytime decisions</span></div>
-            <div class="pillar-item"><span class="pillar-num">07</span><span class="pillar-text">Player skill and planning matter more than stats</span></div>
-            <div class="pillar-item"><span class="pillar-num">08</span><span class="pillar-text">Every run ends eventually — survival duration is the score</span></div>
+            <div class="pillar-item"><span class="pillar-num">01</span><span class="pillar-text">The ship is the durable progression object.</span></div>
+            <div class="pillar-item"><span class="pillar-num">02</span><span class="pillar-text">Alien technology is earned through risk, research, exploration, crafting, and story.</span></div>
+            <div class="pillar-item"><span class="pillar-num">03</span><span class="pillar-text">Survival pressure is layered, not a single fail meter.</span></div>
+            <div class="pillar-item"><span class="pillar-num">04</span><span class="pillar-text">Greed creates the best field stories.</span></div>
+            <div class="pillar-item"><span class="pillar-num">05</span><span class="pillar-text">Episode 1 has a directed ending: turn on the Serian ship.</span></div>
+            <div class="pillar-item"><span class="pillar-num">06</span><span class="pillar-text">Endless mode should become almost impossible beyond day 25-30.</span></div>
+            <div class="pillar-item"><span class="pillar-num">07</span><span class="pillar-text">Current implementation and intended design must stay labeled separately.</span></div>
+            <div class="pillar-item"><span class="pillar-num">08</span><span class="pillar-text">Vendor assets are dependencies, not the game's design authority.</span></div>
           </div>
 
           <div class="emo-loop">
             <div class="emo-label">The Emotional Loop</div>
             <div class="emo-steps">
-              <span class="emo-step">Explore</span>
+              <span class="emo-step">Prepare</span>
+              <span class="emo-arr">→</span>
+              <span class="emo-step">Launch</span>
               <span class="emo-arr">→</span>
               <span class="emo-step">Discover</span>
               <span class="emo-arr">→</span>
               <span class="emo-step">Get Greedy</span>
               <span class="emo-arr">→</span>
-              <span class="emo-step">Push Your Luck</span>
-              <span class="emo-arr">→</span>
               <span class="emo-step">Barely Make It Home</span>
               <span class="emo-arr">→</span>
-              <span class="emo-step">Survive the Night</span>
+              <span class="emo-step">Upgrade the Ship</span>
               <span class="emo-arr">→</span>
-              <span class="emo-step end">Repeat Until You Don't</span>
+              <span class="emo-step end">Survive One More Day</span>
             </div>
+          </div>
+
+          <h2 class="section-title">Current Implementation Anchors</h2>
+
+          <p>This page keeps public-facing design separate from implementation truth. These are the current owner anchors to start from when turning the summary into tasks.</p>
+
+          <table class="event-hope-table">
+            <thead>
+              <tr>
+                <th style="width:180px">Area</th>
+                <th>Current owner or anchor</th>
+                <th style="width:150px">Evidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="ev-name">Player</td>
+                <td class="ev-lesson">AStratoWardPlayerCharacter; BP_SW_ThirdPersonCharacter is a live dependency.</td>
+                <td class="ev-hope">Source / override</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Context UI</td>
+                <td class="ev-lesson">AStratoWardPlayerCharacter::ResolveContextControlKeys.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Interaction</td>
+                <td class="ev-lesson">AStratoWardPlayerCharacter plus UStratoWardInventoryChestInteractionComponent.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Save / Load</td>
+                <td class="ev-lesson">UStratoWardSaveSubsystem, UStratoWardCorePlayStateSave, and SPUD.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Day State</td>
+                <td class="ev-lesson">UStratoWardDayStatSubsystem.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Mining</td>
+                <td class="ev-lesson">BP_Mineral, BP_MiningV2_Multiple, mining loot components, and current Mining V3/V4 prototypes.</td>
+                <td class="ev-hope">Mixed</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Loot</td>
+                <td class="ev-lesson">UStratoWardMiningLootSourceComponent, UStratoWardMiningLootSpawnerComponent, BP_FloatingLoot_Base, and saved floating-loot state.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Space Scatter</td>
+                <td class="ev-lesson">AStratoWardSimplePcgSpaceScatterActor and USimplePcgSpaceScatterComponent.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Aliens</td>
+                <td class="ev-lesson">AStratoWardAlienPawnBase, AStratoWardAIControllerBase, and UStratoWardFlightComponent.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Projectiles</td>
+                <td class="ev-lesson">UStratoWardArmamentHelperLibrary and UStratoWardProjectileVfxWorldSubsystem.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Debug</td>
+                <td class="ev-lesson">UStartoWardCheatManager and UStratoWardDebugMenuWidget.</td>
+                <td class="ev-hope">Source</td>
+              </tr>
+              <tr>
+                <td class="ev-name">Audio</td>
+                <td class="ev-lesson">Wwise integration is the project audio path.</td>
+                <td class="ev-hope">Project context</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 class="section-title">Next Design Tasks</h2>
+
+          <div class="pillar-list">
+            <div class="pillar-item"><span class="pillar-num">01</span><span class="pillar-text">Map the seven-hour Episode 1 path to day count, ship upgrades, alien-tech unlocks, and Serian ship activation.</span></div>
+            <div class="pillar-item"><span class="pillar-num">02</span><span class="pillar-text">Build the ship-upgrade matrix for hull, engines, weapons, scanner, cargo, crafting, life support, shields, and AI/automation.</span></div>
+            <div class="pillar-item"><span class="pillar-num">03</span><span class="pillar-text">Tune endless survival from day 1 through day 30, including the intended collapse curve.</span></div>
+            <div class="pillar-item"><span class="pillar-num">04</span><span class="pillar-text">Pick the shipping mining model and keep the other versions as prototype history.</span></div>
+            <div class="pillar-item"><span class="pillar-num">05</span><span class="pillar-text">Verify current owner paths before implementing ship, crafting, survival, and story systems.</span></div>
           </div>
 
         </div>
