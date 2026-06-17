@@ -1,43 +1,29 @@
 # Next Steps
 
-This repo is staged locally, but not committed or pushed because Git identity and GitHub auth are not configured on this machine.
+The site is published.
 
-## 1. Configure Git identity once
+- Source repo: https://github.com/ponyoprincess-corgi/stratoward-site
+- Live site: https://ponyoprincess-corgi.github.io/stratoward-site/
+- Local repo: `C:\Users\KhangLe\Documents\stratoward-site`
 
-```powershell
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-```
+## Edit Flow
 
-Use your GitHub no-reply email if you prefer privacy.
+Point Codex or Claude Code at this local folder or the GitHub repo. They should edit `index.html`, commit changes, and push or open a PR. GitHub Pages redeploys from `main`.
 
-## 2. Log into GitHub CLI once
-
-```powershell
-gh auth login
-```
-
-Choose GitHub.com, HTTPS, and browser login.
-
-## 3. Publish the repo
-
-From this folder:
+## Local Preview
 
 ```powershell
 cd C:\Users\KhangLe\Documents\stratoward-site
-powershell -ExecutionPolicy Bypass -File .\scripts\publish-github.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\preview.ps1
 ```
 
-The script creates/pushes a GitHub repo named `stratoward-site`.
+Then open:
 
-## 4. Put it online
+```text
+http://127.0.0.1:4173
+```
 
-Fastest options:
+## Optional Later
 
-- GitHub Pages: repo Settings -> Pages -> deploy from branch `main`, folder `/`.
-- Cloudflare Pages: Workers & Pages -> Create application -> Pages -> Import GitHub repo -> `stratoward-site`.
-- Netlify/Vercel: import the GitHub repo, leave build command blank, output directory `.`.
-
-## 5. Let Codex or Claude edit it
-
-Point Codex or Claude Code at the GitHub repo or this local folder. They should edit `index.html`, commit changes, and push or open a PR. The host redeploys from `main`.
+- Add a custom domain in GitHub repo Settings -> Pages.
+- Connect the same repo to Cloudflare Pages if you want Cloudflare deploy previews or DNS management.
